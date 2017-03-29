@@ -81,13 +81,16 @@
                 android:layout_marginTop="24dp">
 
             <!--  Teacher Picture Button -->
-            <Button
-                    android:id="@+id/btn_nannypic"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="@string/hint_nannypic"
-                    android:layout_gravity="left"/>
+
+            <ImageButton
+                android:id="@+id/btn_nannypic"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/pic"
+                android:background="@null"
+                android:contentDescription="@string/btn_next"
+                android:layout_gravity="right"/>
 
             <!--  Teacher Picture -->
             <ImageView

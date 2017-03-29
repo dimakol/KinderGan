@@ -43,7 +43,7 @@ public class SignupParentActivity extends Activity
                     "(?!.*\\s)" +         // disallow spaces
                     ".{8,15})";           // length at least 8 characters and maximum of 15
 
-    @InjectView(R.id.input_id) EditText inputID;
+/*    @InjectView(R.id.input_id) EditText inputID;
     @InjectView(R.id.input_fname) EditText inputFirstName;
     @InjectView(R.id.input_lname) EditText inputLastName;
     @InjectView(R.id.input_address) EditText inputAddress;
@@ -58,7 +58,7 @@ public class SignupParentActivity extends Activity
     @InjectView(R.id.input_email) EditText inputEmail;
     @InjectView(R.id.input_password) EditText inputPassword;
     @InjectView(R.id.btn_signup) Button btnRegister;
-    @InjectView(R.id.link_login) TextView btnLinkToLogin;
+    @InjectView(R.id.link_login) TextView btnLinkToLogin;*/
 
     // For kid birth date
     private Calendar calendar;
@@ -67,17 +67,21 @@ public class SignupParentActivity extends Activity
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private ImageButton btnNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_parent);
+        btnNext = (ImageButton) findViewById(R.id.img_btn_next);
+
 
         // Inject the ButterKnife design
         ButterKnife.inject(this);
 
-        // Set kid birth date
+
+                // Set kid birth date
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -92,7 +96,13 @@ public class SignupParentActivity extends Activity
 
         // SQLite database handler
         db = new SQLiteHandler(getApplicationContext());
-
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent nexxt = new Intent(SignupParentActivity.this, SignupParentGanActivity.class);
+                startActivity(nexxt);
+            }
+        });
         // Check if user is already logged in or not
         if (session.isLoggedIn())
         {
@@ -100,10 +110,10 @@ public class SignupParentActivity extends Activity
             Intent intent = new Intent(SignupParentActivity.this, UserActivity.class);
             startActivity(intent);
             finish();
-        }
+        }}
 
         // Kid birth date Button Click event
-        inputKidBirthDate.setOnClickListener(new View.OnClickListener()
+ /*       inputKidBirthDate.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -122,7 +132,9 @@ public class SignupParentActivity extends Activity
             }
         });
 
-        // Link to login Screen
+
+                // Link to login Screen
+
         btnLinkToLogin.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -155,13 +167,13 @@ public class SignupParentActivity extends Activity
 
     private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener()
     {
-        /**
+        *//**
          * Set the date that was chosen
          * @param arg0 - The object
          * @param arg1 - Year
          * @param arg2 - Month
          * @param arg3 - Day
-         */
+         *//*
         @Override
         public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3)
         {
@@ -169,21 +181,21 @@ public class SignupParentActivity extends Activity
         }
     };
 
-    /**
+    *//**
      * Show the date that was chosen in the kid birth date input text
      * @param year
      * @param month
      * @param day
-     */
+     *//*
     private void showDate(int year, int month, int day)
     {
         inputKidBirthDate.setText(new StringBuilder().append(day).append("/")
                 .append(month).append("/").append(year));
     }
 
-    /**
+    *//**
      * This function performs the sign up operation.
-     */
+     *//*
     public void signup()
     {
         Log.d(TAG, "SignupParent");
@@ -217,18 +229,18 @@ public class SignupParentActivity extends Activity
                      kinderganname, kinderganaddress, kinderganclass, email, password);
     }
 
-    /**
+    *//**
      * This function shows a message to the user that the sign up has failed.
-     */
+     *//*
     public void onSignupFailed(String message)
     {
         Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    /**
+    *//**
      * This is a validation function that checks all the fields.
      * @return boolean - This returns true if all the fields are valid, false if one of the fields is invalid.
-     */
+     *//*
     public boolean validate(final String id, final String fname, final String lname, final String address, final String phone,
                             final String kidfname, final String kidlname, final String kidbirthdate, final String kidpic,
                             final String kinderganname, final String kinderganaddress, final String kinderganclass,
@@ -398,10 +410,10 @@ public class SignupParentActivity extends Activity
         return valid;
     }
 
-    /**
+    *//**
      * Function to store user in MySQL database,
      * will post all params to register url
-     */
+     *//*
     private void registerUser(final String id, final String fname, final String lname, final String address, final String phone,
                               final String kidfname, final String kidlname, final String kidbirthdate, final String kidpic,
                               final String kinderganname, final String kinderganaddress, final String kinderganclass,
@@ -491,21 +503,22 @@ public class SignupParentActivity extends Activity
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    /**
+    *//**
      * Show the progress dialog
-     */
+     *//*
     private void showDialog()
     {
         if (!pDialog.isShowing())
             pDialog.show();
     }
 
-    /**
+    *//**
      * Hide the progress dialog
-     */
+     *//*
     private void hideDialog()
     {
         if (pDialog.isShowing())
             pDialog.dismiss();
-    }
+    }*/
 }
+

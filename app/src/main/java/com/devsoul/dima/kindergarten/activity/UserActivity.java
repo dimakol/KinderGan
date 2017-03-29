@@ -2,6 +2,7 @@ package com.devsoul.dima.kindergarten.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,7 @@ public class UserActivity extends Activity
     private TextView txtName;
     private TextView txtEmail;
     private ImageButton btnLogout;
+    private ImageButton btnEnter;
 
     private SQLiteHandler db;
     private SessionManager session;
@@ -35,6 +37,7 @@ public class UserActivity extends Activity
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
         btnLogout = (ImageButton) findViewById(R.id.btnLogout);
+        btnEnter = (ImageButton) findViewById(R.id.btnEnter);
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
@@ -67,6 +70,13 @@ public class UserActivity extends Activity
                 logoutUser();
             }
         });
+        btnEnter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(UserActivity.this,TeacherActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -84,4 +94,5 @@ public class UserActivity extends Activity
         startActivity(intent);
         finish();
     }
+
 }

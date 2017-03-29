@@ -2,13 +2,58 @@
 <items version="2" >
 
     <item
-        is-multidex="false"
+        is-multidex="true"
+        jar="C:\Android\.android\build-cache\7025c114c2179f31ac4e526cade9d43f89fc077e\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8d8c5463a1a50691e2cf66cd7ce4751c8545b584">
+        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_2f75c4b49307a8f6cded41cbe7357272cb848a8f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8495fae521a26dfc4368bd016239b3abbf76f261">
+        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_f0c06bf154f13ed4a98121a552deef046cd21f94\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
+        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_1e559d8fb09f4d6d69f9538f7eff26456345cdc9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Vital\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\transforms\dex\debug\folders\1000\10\library-2.4.0_1c448b98aa51752c46f7d3e7e73222639060788b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Android\.android\build-cache\4cdaaaa7c428f87c915e1e6461c563fc3b90a802\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="052802ed198178e7133de387fbc87d3f2998482a">
+        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_225909c8ea86360bf61276321d4b65d783eec0ab\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\libs\volley.jar"
-        jumboMode="false"
+        jumboMode="true"
         optimize="true"
         revision="25.0.0"
         sha1="d4aaa36e04ee71a83444f8367c97a46fda662d2c">
-        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\pre-dexed\debug\volley_4ed1726232d54bccadc06261fd8be3cf4635fe1d.jar" />
+        <dex dex="C:\Users\Vital\Desktop\KinderGan-master (2)\KinderGan\app\build\intermediates\transforms\dex\debug\folders\1000\2\volley_4ed1726232d54bccadc06261fd8be3cf4635fe1d\classes.dex" />
     </item>
 
 </items>

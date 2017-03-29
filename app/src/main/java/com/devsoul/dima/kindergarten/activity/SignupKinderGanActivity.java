@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * The Signup KinderGan Activity enables the user that is a teacher\parent to create an account in the application.
+ * The Signup KinderGan Activity enables the user that is a teacher to create an account in the application.
  */
 public class SignupKinderGanActivity extends Activity
 {

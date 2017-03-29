@@ -1,16 +1,13 @@
 <component name="libraryTable">
   <library name="support-compat-24.2.1">
-    <ANNOTATIONS>
-      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/annotations.zip!/" />
-    </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://C:/Android/.android/build-cache/0b13677cbf2e2a15f14a0ac73ed5c619276d5f9a/output/jars/classes.jar!/" />
-      <root url="jar://C:/Android/.android/build-cache/0b13677cbf2e2a15f14a0ac73ed5c619276d5f9a/output/jars/libs/internal_impl-24.2.1.jar!/" />
-      <root url="file://C:/Android/.android/build-cache/0b13677cbf2e2a15f14a0ac73ed5c619276d5f9a/output/res" />
+      <root url="jar://C:/Android/.android/build-cache/d6790c7b34345cd778fccb12e0a97dc7b2389d04/output/jars/libs/internal_impl-24.2.1.jar!/" />
+      <root url="jar://C:/Android/.android/build-cache/d6790c7b34345cd778fccb12e0a97dc7b2389d04/output/jars/classes.jar!/" />
+      <root url="file://C:/Android/.android/build-cache/d6790c7b34345cd778fccb12e0a97dc7b2389d04/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://D:/android-sdk/extras/android/m2repository/com/android/support/support-compat/24.2.1/support-compat-24.2.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/support-compat/24.2.1/support-compat-24.2.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -31,7 +31,7 @@ public class SignupTeacherActivity extends Activity
     @InjectView(R.id.input_phone) EditText inputPhone;
     @InjectView(R.id.link_login)  TextView btnLinkToLogin;
 
-    private Button btnImgChoose;    // Choose the image
+    private ImageButton btnImgChoose;    // Choose the image
     private ImageView imageView;    // To show the selected image
 
     private SessionManager session;
@@ -49,7 +49,7 @@ public class SignupTeacherActivity extends Activity
         setContentView(R.layout.activity_signup_teacher);
 
         // Image choose button
-        btnImgChoose = (Button) findViewById(R.id.btn_nannypic);
+        btnImgChoose = (ImageButton) findViewById(R.id.btn_nannypic);
         // View of the image
         imageView = (ImageView) findViewById(R.id.imageView);
 
