@@ -18,7 +18,7 @@
     <string name="hint_kganclass">KinderGan Class</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_register">REGISTER</string>
-    <string name="signup_lnk">No account yet? Sign up now</string>
+    <string name="signup_lnk">Dont have an account? <b>Sign Up</b></string>
     <string name="login_lnk">Already a member? Login</string>
     <string name="welcome">Welcome</string>
     <string name="btn_logout">LOGOUT</string>

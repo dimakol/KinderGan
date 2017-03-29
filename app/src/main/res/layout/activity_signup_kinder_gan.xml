@@ -103,14 +103,14 @@
 
         <!-- register Button -->
         <ImageButton
-                android:id="@+id/img_btn_signup"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginBottom="30dp"
-                android:src="@drawable/register"
-                android:background="@null"
-                android:contentDescription="@string/btn_register"/>
+            android:id="@+id/img_btn_signup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="18dp"
+            android:background="@null"
+            android:contentDescription="@string/btn_register"
+            android:src="@drawable/register" />
 
         <!-- login Link -->
         <TextView android:id="@+id/link_login"
