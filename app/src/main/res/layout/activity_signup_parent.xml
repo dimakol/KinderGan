@@ -7,7 +7,7 @@
         android:background="@drawable/background"
         android:isScrollContainer="false"
         android:fitsSystemWindows="true"
-        tools:context="com.devsoul.dima.kindergarten.activity.SignupParentActivity">
+        tools:context="com.devsoul.dima.kindergarten.activities.SignupParentActivity">
 
     <LinearLayout
             android:orientation="vertical"

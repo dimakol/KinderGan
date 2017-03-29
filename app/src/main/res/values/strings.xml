@@ -11,6 +11,7 @@
     <string name="hint_address">Address</string>
     <string name="hint_phone">Phone</string>
     <string name="hint_kidbirthdate">Kid\'s Birth Date</string>
+    <string name="hint_pic">User Picture</string>
     <string name="hint_kidpic">Kid\'s Picture</string>
     <string name="hint_nannypic">Teacher\'s Picture</string>
     <string name="hint_kganname">KinderGan Name</string>
