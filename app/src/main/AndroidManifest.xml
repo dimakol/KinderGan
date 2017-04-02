@@ -22,24 +22,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SignupActivity"/>
-        <activity android:name=".activities.UserActivity">
-        </activity>
-        <activity android:name=".activities.RegistrationActivity">
-        </activity>
-        <activity android:name=".activities.SignupParentActivity">
-        </activity>
-        <activity android:name=".activities.SignupTeacherActivity">
-        </activity>
-        <activity android:name=".activities.SignupKinderGanActivity">
-        </activity>
-        <activity android:name=".activity.SignupActivity"/>
-        <activity android:name=".activity.SignupParentGanActivity"/>
-        <activity android:name=".activity.UserActivity"/>
-        <activity android:name=".activity.RegistrationActivity"/>
-        <activity android:name=".activity.SignupParentActivity"/>
-        <activity android:name=".activity.SignupTeacherActivity"/>
-        <activity android:name=".activity.TeacherActivity"/>
-        <activity android:name=".activity.SignupKinderGanActivity"/>
+        <activity android:name=".activities.SignupParentGanActivity"/>
+        <activity android:name=".activities.UserActivity"/>
+        <activity android:name=".activities.RegistrationActivity"/>
+        <activity android:name=".activities.SignupParentActivity"/>
+        <activity android:name=".activities.SignupTeacherActivity"/>
+        <activity android:name=".activities.TeacherActivity"/>
+        <activity android:name=".activities.SignupKinderGanActivity"/>
     </application>
 
 </manifest>

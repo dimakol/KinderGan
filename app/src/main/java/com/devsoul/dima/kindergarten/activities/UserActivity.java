@@ -2,18 +2,15 @@ package com.devsoul.dima.kindergarten.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.devsoul.dima.kindergarten.R;
-import com.devsoul.dima.kindergarten.helper.BitmapHandler;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
 import com.squareup.picasso.Picasso;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.HashMap;
 
@@ -25,14 +22,13 @@ public class UserActivity extends Activity
 {
     private TextView txtName;
     private TextView txtEmail;
-    private ImageView imageView;
-    private Button btnLogout;
-    private ImageButton btnLogout;
+    private CircleImageView imageView;
     private ImageButton btnEnter;
+    private ImageButton btnLogout;
 
     private SQLiteHandler db;
     private SessionManager session;
-    private BitmapHandler bmpHandler;
+    //private BitmapHandler bmpHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,10 +38,9 @@ public class UserActivity extends Activity
 
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        btnLogout = (Button) findViewById(R.id.btnLogout);
-        btnLogout = (ImageButton) findViewById(R.id.btnLogout);
+        imageView = (CircleImageView) findViewById(R.id.circle_profile);
         btnEnter = (ImageButton) findViewById(R.id.btnEnter);
+        btnLogout = (ImageButton) findViewById(R.id.btnLogout);
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
@@ -54,7 +49,7 @@ public class UserActivity extends Activity
         session = new SessionManager(getApplicationContext());
 
         // Bitmap handler
-        bmpHandler = new BitmapHandler(getApplicationContext());
+        //bmpHandler = new BitmapHandler(getApplicationContext());
 
         // Check if user is already logged in or not
         if (!session.isLoggedIn())
@@ -73,8 +68,9 @@ public class UserActivity extends Activity
         txtName.setText(name);
         txtEmail.setText(email);
 
-        // Show user profile image
-        Picasso.with(getApplicationContext()).load(path).into(imageView);
+        // Show user profile image in circle image view
+        Picasso.with(getApplicationContext()).load(path).placeholder(R.drawable.profile).error(R.mipmap.ic_launcher)
+                .into(imageView);
 
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener()

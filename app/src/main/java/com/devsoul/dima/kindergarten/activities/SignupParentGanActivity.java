@@ -1,4 +1,4 @@
-package com.devsoul.dima.kindergarten.activity;
+package com.devsoul.dima.kindergarten.activities;
 
 import android.app.Activity;
 import android.content.Intent;

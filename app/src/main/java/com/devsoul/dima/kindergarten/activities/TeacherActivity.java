@@ -1,14 +1,9 @@
-package com.devsoul.dima.kindergarten.activity;
+package com.devsoul.dima.kindergarten.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-
 import com.devsoul.dima.kindergarten.R;
-import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
-import com.devsoul.dima.kindergarten.helper.SessionManager;
-
-import java.util.HashMap;
 
 /**
  * Teacher Main Activity screen

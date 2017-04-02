@@ -228,12 +228,30 @@
     </item>
     <item
         is-multidex="false"
+        jar="C:\Users\Dima\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\picasso-2.5.2_c4adeb7c2b92d79c908dcd239f65af7a2eda0c65.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="C:\Users\Dima\IdeaProjects\Kindergarten\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\24.2.1\jars\classes.jar"
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
         sha1="7521486d9bfd2cd9e756e0cf75ed7d97f2ce2d3b">
         <dex dex="C:\Users\Dima\IdeaProjects\Kindergarten\app\build\intermediates\pre-dexed\debug\com.android.support-recyclerview-v7-24.2.1_a3a41f029547a1829b1d5447aca1314c2bc7b6c7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Dima\IdeaProjects\KinderGan\app\libs\volley.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d4aaa36e04ee71a83444f8367c97a46fda662d2c">
+        <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\volley_e4d5e69f42f4403d7c4342a2f0f58c410f3a0b45.jar" />
     </item>
     <item
         is-multidex="false"

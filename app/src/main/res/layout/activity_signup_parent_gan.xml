@@ -9,7 +9,7 @@
     android:background="@drawable/background"
     android:isScrollContainer="false"
     android:fitsSystemWindows="true"
-    tools:context="com.devsoul.dima.kindergarten.activity.SignupParentGanActivity">
+    tools:context=".activities.SignupParentGanActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/back2"
-    tools:context="com.devsoul.dima.kindergarten.activity.TeacherActivity">
+    tools:context=".activities.TeacherActivity">
 
 
     <TextView
