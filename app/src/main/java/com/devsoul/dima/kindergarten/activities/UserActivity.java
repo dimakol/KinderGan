@@ -11,6 +11,7 @@ import com.devsoul.dima.kindergarten.R;
 import com.devsoul.dima.kindergarten.helper.BitmapHandler;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -65,9 +66,9 @@ public class UserActivity extends Activity
         // Displaying the user details on the screen
         txtName.setText(name);
         txtEmail.setText(email);
-        //Toast.makeText(getBaseContext(), path, Toast.LENGTH_LONG).show();
-        // Decode the image and set on the image view
-        //bmpHandler.loadBitmap(Uri.parse(path), imageView);
+
+        // Show user profile image
+        Picasso.with(getApplicationContext()).load(path).into(imageView);
 
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener()

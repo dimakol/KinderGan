@@ -125,7 +125,7 @@ public class BitmapHandler
     class BitmapWorkerTask extends AsyncTask<Uri, Void, Bitmap>
     {
         private final WeakReference<ImageView> imageViewReference;
-        private Uri data;
+        private Uri uri;
 
         // Constructor
         public BitmapWorkerTask(ImageView imageView)
@@ -138,8 +138,8 @@ public class BitmapHandler
         @Override
         protected Bitmap doInBackground(Uri... params)
         {
-            data = params[0];
-            return decodeSampledBitmapFromStream(data, 300, 300);
+            uri = params[0];
+            return decodeSampledBitmapFromStream(uri, 300, 300);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.

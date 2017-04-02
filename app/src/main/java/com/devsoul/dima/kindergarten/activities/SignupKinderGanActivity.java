@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,11 +21,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.devsoul.dima.kindergarten.R;
 import com.devsoul.dima.kindergarten.app.AppConfig;
 import com.devsoul.dima.kindergarten.app.AppController;
-import com.devsoul.dima.kindergarten.model.KinderGan;
-import com.devsoul.dima.kindergarten.model.Teacher;
 import com.devsoul.dima.kindergarten.helper.BitmapHandler;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
+import com.devsoul.dima.kindergarten.model.KinderGan;
+import com.devsoul.dima.kindergarten.model.Teacher;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -386,6 +387,12 @@ public class SignupKinderGanActivity extends Activity
                 return params;
             }
         };
+
+        //Set a retry policy in case of SocketTimeout & ConnectionTimeout Exceptions.
+        //Volley does retry for you if you have specified the policy.
+        strReq.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
