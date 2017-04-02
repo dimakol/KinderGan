@@ -10,7 +10,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        tools:context="com.devsoul.dima.kindergarten.activity.UserActivity">
+        tools:context="com.devsoul.dima.kindergarten.activities.UserActivity">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -80,5 +80,22 @@
         android:src="@drawable/enter"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true" />
+        <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/hint_pic"/>
+
+        <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dip"
+                android:background="@color/btn_logut_bg"
+                android:text="@string/btn_logout"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+    </LinearLayout>
 
 </RelativeLayout>

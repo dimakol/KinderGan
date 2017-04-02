@@ -5,8 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 
@@ -123,7 +125,7 @@ public class BitmapHandler
     class BitmapWorkerTask extends AsyncTask<Uri, Void, Bitmap>
     {
         private final WeakReference<ImageView> imageViewReference;
-        private Uri data;
+        private Uri uri;
 
         // Constructor
         public BitmapWorkerTask(ImageView imageView)
@@ -136,8 +138,8 @@ public class BitmapHandler
         @Override
         protected Bitmap doInBackground(Uri... params)
         {
-            data = params[0];
-            return decodeSampledBitmapFromStream(data, 300, 300);
+            uri = params[0];
+            return decodeSampledBitmapFromStream(uri, 300, 300);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
@@ -154,5 +156,19 @@ public class BitmapHandler
                 }
             }
         }
+    }
+
+    /**
+     * Convert Bitmap to base64 String.
+     * @param bmp - Bitmap
+     * @return encodedImage
+     */
+    public String getStringImage(Bitmap bmp)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
     }
 }
