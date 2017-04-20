@@ -139,7 +139,7 @@ public class BitmapHandler
         protected Bitmap doInBackground(Uri... params)
         {
             uri = params[0];
-            return decodeSampledBitmapFromStream(uri, 300, 300);
+            return decodeSampledBitmapFromStream(uri, 200, 200);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.

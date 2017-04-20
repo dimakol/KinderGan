@@ -57,19 +57,38 @@ public class UserActivity extends Activity
             logoutUser();
         }
 
-        // Fetching user details from sqlite
-        HashMap<String, String> user = db.getTeacherDetails();
+        HashMap<String, String> user = null;
+        String path = null;
+        // SQLite table of teachers contains records
+        if (db.getRowCount(db.TABLE_TEACHERS) > 0)
+        {
+            // Fetching user details from SQLite teachers table
+            user = db.getTeacherDetails();
 
-        String name = user.get(db.KEY_FIRST_NAME) +  user.get(db.KEY_lAST_NAME);
+            path = user.get(db.KEY_PHOTO);
+        }
+        // SQLite table of parents contains records
+        else if (db.getRowCount(db.TABLE_PARENTS) > 0)
+        {
+            // Fetching user details from SQLite parents table
+            user = db.getParentDetails();
+
+            // Fetching kid details from SQLite kids table
+            HashMap<String, String> kid;
+            kid = db.getKidDetails();
+
+            path = kid.get(db.KEY_PHOTO);
+        }
+
+        String name = user.get(db.KEY_FIRST_NAME) + " " + user.get(db.KEY_lAST_NAME);
         String email = user.get(db.KEY_EMAIL);
-        String path = user.get(db.KEY_PHOTO);
 
         // Displaying the user details on the screen
         txtName.setText(name);
         txtEmail.setText(email);
 
         // Show user profile image in circle image view
-        Picasso.with(getApplicationContext()).load(path).placeholder(R.drawable.profile).error(R.mipmap.ic_launcher)
+        Picasso.with(getApplicationContext()).load(path).placeholder(R.drawable.profile).error(R.drawable.profile)
                 .into(imageView);
 
         // Logout button click event
@@ -93,12 +112,15 @@ public class UserActivity extends Activity
     /**
      * Logging out the user.
      * Will set isLoggedIn flag to false in shared preferences
-     * and clears the user data from sqlite users table
+     * and clears the user data from SQLite users table
      */
     private void logoutUser()
     {
         session.setLogin(false);
         db.deleteTeachers();
+        db.deleteParents();
+        db.deleteKids();
+        //db.deleteGans();
 
         // Launching the login activity
         Intent intent = new Intent(UserActivity.this, LoginActivity.class);

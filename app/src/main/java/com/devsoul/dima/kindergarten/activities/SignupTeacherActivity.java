@@ -26,13 +26,15 @@ public class SignupTeacherActivity extends Activity
     private static final int PICK_IMAGE_REQUEST = 1; // To get Image from gallery
 
     @InjectView(R.id.input_id)    EditText inputID;
-    @InjectView(R.id.input_fname) EditText inputFirstName;
-    @InjectView(R.id.input_lname) EditText inputLastName;
+    @InjectView(R.id.input_FName) EditText inputFirstName;
+    @InjectView(R.id.input_LName) EditText inputLastName;
     @InjectView(R.id.input_phone) EditText inputPhone;
     @InjectView(R.id.link_login)  TextView btnLinkToLogin;
 
     private ImageButton btnImgChoose;    // Choose the image
-    private ImageView imageView;    // To show the selected image
+    private ImageView imageView;         // To show the selected image
+
+    private ImageButton img_btnNext;
 
     private SessionManager session;
     private BitmapHandler bmpHandler;
@@ -49,12 +51,12 @@ public class SignupTeacherActivity extends Activity
         setContentView(R.layout.activity_signup_teacher);
 
         // Image choose button
-        btnImgChoose = (ImageButton) findViewById(R.id.btn_nannypic);
+        btnImgChoose = (ImageButton) findViewById(R.id.btn_NannyPic);
         // View of the image
         imageView = (ImageView) findViewById(R.id.imageView);
 
         // Next button
-        ImageButton img_btnNext = (ImageButton) findViewById(R.id.img_btn_next);
+        img_btnNext = (ImageButton) findViewById(R.id.img_btn_next);
 
         // Inject the ButterKnife design
         ButterKnife.inject(this);

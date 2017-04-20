@@ -22,8 +22,8 @@ public class RegistrationActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        imgbtnParent = (ImageButton) findViewById(R.id.imgbtnParent);
-        imgbtnNanny = (ImageButton) findViewById(R.id.imgbtnNanny);
+        imgbtnParent = (ImageButton) findViewById(R.id.img_btn_parent);
+        imgbtnNanny = (ImageButton) findViewById(R.id.img_btn_nanny);
 
         // parent click event
         imgbtnParent.setOnClickListener(new View.OnClickListener()
