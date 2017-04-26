@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="library-material-1.1.0">
+    <CLASSES>
+      <root url="file://C:/Android/.android/build-cache/7025c114c2179f31ac4e526cade9d43f89fc077e/output/res" />
+      <root url="jar://C:/Android/.android/build-cache/7025c114c2179f31ac4e526cade9d43f89fc077e/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.weiwangcn.betterspinner/library-material/1.1.0/85e67e0fc16a89000824c7e06e27e3411ccf462c/library-material-1.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

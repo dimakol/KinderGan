@@ -18,6 +18,11 @@ public class KinderGan implements Serializable
     // Constructor
     public KinderGan() {}
 
+    public KinderGan(String Name)
+    {
+        this.Name = Name;
+    }
+
     public KinderGan(String Name, String Address)
     {
         this.Name = Name;

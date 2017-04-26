@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.android.volley.Request.Method;
@@ -18,7 +20,9 @@ import com.devsoul.dima.kindergarten.app.AppConfig;
 import com.devsoul.dima.kindergarten.app.AppController;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
+import com.devsoul.dima.kindergarten.model.Kid;
 import com.devsoul.dima.kindergarten.model.KinderGan;
+import com.devsoul.dima.kindergarten.model.Parent;
 import com.devsoul.dima.kindergarten.model.Teacher;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,12 +37,15 @@ public class LoginActivity extends Activity
 {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
+    private RadioGroup radioGroup;
+    private RadioButton parent, nanny;
     private ImageButton imgbtnLogin;
 
     @InjectView(R.id.input_email) EditText inputEmail;
     @InjectView(R.id.input_password) EditText inputPassword;
-    @InjectView(R.id.link_signup) TextView btnLinkToRegister;
+    @InjectView(R.id.link_SignUp) TextView btnLinkToRegister;
 
+    private int type;
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
@@ -49,6 +56,9 @@ public class LoginActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        radioGroup = (RadioGroup) findViewById(R.id.myRadioGroup);
+        parent = (RadioButton) findViewById(R.id.parent);
+        nanny = (RadioButton) findViewById(R.id.nanny);
         imgbtnLogin = (ImageButton) findViewById(R.id.img_btn_login);
 
         // Inject the ButterKnife design
@@ -73,7 +83,25 @@ public class LoginActivity extends Activity
             finish();
         }
 
-        // login button Click Event
+        // Radio button selection
+        radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId)
+            {
+                // find which radio button is selected
+                if(checkedId == R.id.nanny)
+                {
+                    type = 1;
+                }
+                else if(checkedId == R.id.parent)
+                {
+                    type = 2;
+                }
+            }
+        });
+
+        // Login button Click Event
         imgbtnLogin.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -114,7 +142,7 @@ public class LoginActivity extends Activity
         }
 
         // login user
-        checkLogin(email, password);
+        checkLogin(email, password, type);
     }
 
     /**
@@ -126,7 +154,7 @@ public class LoginActivity extends Activity
     }
 
     /**
-     * This is a validation function that checks two fields: Email and Password.
+     * This is a validation function that checks two fields: Email and Password, and that radio button is selected.
      * @param email - The email that was entered.
      * @param password - The password that was entered.
      * @return boolean - This returns true if all the fields are valid, false if one of the fields is invalid.
@@ -157,13 +185,23 @@ public class LoginActivity extends Activity
             inputPassword.setError(null);
         }
 
+        // Radio button validation
+        if ((!parent.isChecked()) && (!nanny.isChecked()))
+        {
+            onLoginFailed("Please choose login option: Parent or Nanny");
+            valid = false;
+        }
+
         return valid;
     }
 
     /**
      * Function to verify login details in mysql db using volley http request
+     * @param email
+     * @param password
+     * @param type - Nanny or Parent
      */
-    private void checkLogin(final String email, final String password)
+    private void checkLogin(final String email, final String password, final int type)
     {
         // Tag used to cancel the request
         String tag_string_req = "login_request";
@@ -193,8 +231,8 @@ public class LoginActivity extends Activity
                         // Now store the user in SQLite
                         JSONObject user = jObj.getJSONObject("user");
                         // Get the type of user to know if it Teacher or Parent
-                        int type = Integer.parseInt(user.getString("type"));
-                        if (type == 1)
+                        int jType = Integer.parseInt(user.getString("type"));
+                        if (jType == 1)
                         // Teacher
                         {
                             Teacher Nanny = new Teacher();
@@ -213,6 +251,34 @@ public class LoginActivity extends Activity
 
                             // Inserting row in teachers table
                             db.addTeacher(Nanny, Gan);
+                        }
+                        else if (jType == 2)
+                        // Parent
+                        {
+                            Parent parent = new Parent();
+                            Kid child = new Kid();
+                            KinderGan Gan = new KinderGan();
+
+                            parent.SetID(user.getString("ID"));
+                            parent.SetFirstName(user.getString("firstname"));
+                            parent.SetLastName(user.getString("lastname"));
+                            parent.SetAddress(user.getString("address"));
+                            parent.SetPhone(user.getString("phone"));
+                            parent.SetEmail(user.getString("email"));
+                            parent.SetCreatedAt(user.getString("created_at"));
+
+                            // Inserting row in parents table
+                            db.addParent(parent);
+
+                            child.SetName(user.getString("kid_name"));
+                            child.SetBirthDate(user.getString("kid_birthdate"));
+                            child.SetPicture(user.getString("kid_photo"));
+                            child.SetClass(user.getString("kid_class"));
+                            Gan.SetName(user.getString("kindergan_name"));
+                            child.SetCreatedAt(user.getString("created_at"));
+
+                            // Inserting row in kids table
+                            db.addKid(child, Gan);
                         }
 
                         // Create login session
@@ -256,6 +322,7 @@ public class LoginActivity extends Activity
                 params.put("tag", "login");
                 params.put("email", email);
                 params.put("password", password);
+                params.put("type", Integer.toString(type));
 
                 return params;
             }
@@ -282,5 +349,4 @@ public class LoginActivity extends Activity
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
-
 }

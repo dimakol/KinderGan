@@ -34,25 +34,27 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * The Signup KinderGan Activity enables the user that is a teacher\parent to create an account in the application.
+ * The Signup KinderGan Activity enables the user that is a teacher to create an account in the application.
  */
 public class SignupKinderGanActivity extends Activity
 {
     private static final String TAG = SignupKinderGanActivity.class.getSimpleName();
     private static final String PASSWORD_PATTERN =
-            "((?=.*\\d)" +        // must contains one digit from 0-9
+                    "((?=.*\\d)" +        // must contains one digit from 0-9
                     "(?=.*[a-z])" +       // must contains one lowercase characters
                     "(?=.*[A-Z])" +       // must contains one uppercase characters
                     "(?=.*[!@#$%])" +     // must contains one special symbols in the list "!@#$%"
                     "(?!.*\\s)" +         // disallow spaces
                     ".{8,15})";           // length at least 8 characters and maximum of 15
 
-    @InjectView(R.id.input_kinderganname) EditText inputKinderGanName;
-    @InjectView(R.id.input_kinderganaddress) EditText inputKinderGanAddress;
-    @InjectView(R.id.input_kinderganclass) EditText inputKinderGanClass;
+    @InjectView(R.id.input_KinderGanName) EditText inputKinderGanName;
+    @InjectView(R.id.input_KinderGanAddress) EditText inputKinderGanAddress;
+    @InjectView(R.id.input_KinderGanClass) EditText inputKinderGanClass;
     @InjectView(R.id.input_email) EditText inputEmail;
     @InjectView(R.id.input_password) EditText inputPassword;
     @InjectView(R.id.link_login) TextView btnLinkToLogin;
+
+    private ImageButton img_btnBack, img_btnRegister;
 
     private ProgressDialog pDialog;
     private SessionManager session;
@@ -69,9 +71,9 @@ public class SignupKinderGanActivity extends Activity
         setContentView(R.layout.activity_signup_kinder_gan);
 
         // Back button
-        ImageButton img_btnBack = (ImageButton) findViewById(R.id.img_btn_back);
+        img_btnBack = (ImageButton) findViewById(R.id.img_btn_back);
         // Register button
-        ImageButton img_btnRegister = (ImageButton) findViewById(R.id.img_btn_signup);
+        img_btnRegister = (ImageButton) findViewById(R.id.img_btn_SignUp);
 
         // Inject the ButterKnife design
         ButterKnife.inject(this);
@@ -174,7 +176,7 @@ public class SignupKinderGanActivity extends Activity
      */
     public void signup()
     {
-        Log.d(TAG, "SignupTeacher");
+        Log.d(TAG, "SignupTeacherGan");
 
         String KinderGan_name = inputKinderGanName.getText().toString().trim();
         String KinderGan_address = inputKinderGanAddress.getText().toString().trim();
@@ -237,7 +239,7 @@ public class SignupKinderGanActivity extends Activity
         }
 
         // Class validation
-        if (Nanny.GetClass().isEmpty() || Nanny.GetClass().length() > 1)
+        if (Nanny.GetClass().isEmpty() || Integer.parseInt(Nanny.GetClass()) == 0)
         {
             inputKinderGanClass.setError("Enter KinderGan number of class where you work !");
             valid = false;
@@ -302,22 +304,8 @@ public class SignupKinderGanActivity extends Activity
                     // Check for error node in json
                     if (!error)
                     {
-                        /*
-                        // User successfully stored in MySQL
-                        // Now store the user in sqlite
-                        String uid = jObj.getString("uid");
-
-                        JSONObject user = jObj.getJSONObject("user");
-                        String name = user.getString("firstname") + " " + user.getString("lastname");
-                        String email = user.getString("email");
-                        String created_at = user.getString("created_at");
-
-                        // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
-                        */
-
                         // Teacher user successfully stored in MySQL
-                        // Now store the teacher user in sqlite
+                        // Now store the teacher user in SQLite
                         JSONObject user = jObj.getJSONObject("user");
                         Nanny.SetID(user.getString("ID"));
                         Nanny.SetFirstName(user.getString("firstname"));
@@ -370,7 +358,7 @@ public class SignupKinderGanActivity extends Activity
             {
                 // Posting parameters to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "register");
+                params.put("tag", "register_teacher");
                 params.put("ID", Nanny.GetID());
                 params.put("First_Name", Nanny.GetFirstName());
                 params.put("Last_Name", Nanny.GetLastName());

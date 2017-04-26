@@ -10,10 +10,10 @@ import android.widget.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.devsoul.dima.kindergarten.R;
+import com.devsoul.dima.kindergarten.helper.BitmapHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
 import com.devsoul.dima.kindergarten.model.KinderGan;
 import com.devsoul.dima.kindergarten.model.Teacher;
-import com.squareup.picasso.Picasso;
 
 /**
  * The Signup teacher Activity enables the user that is a teacher to create an account in the application,
@@ -26,16 +26,18 @@ public class SignupTeacherActivity extends Activity
     private static final int PICK_IMAGE_REQUEST = 1; // To get Image from gallery
 
     @InjectView(R.id.input_id)    EditText inputID;
-    @InjectView(R.id.input_fname) EditText inputFirstName;
-    @InjectView(R.id.input_lname) EditText inputLastName;
+    @InjectView(R.id.input_FName) EditText inputFirstName;
+    @InjectView(R.id.input_LName) EditText inputLastName;
     @InjectView(R.id.input_phone) EditText inputPhone;
     @InjectView(R.id.link_login)  TextView btnLinkToLogin;
 
-    private Button btnImgChoose;    // Choose the image
-    private ImageView imageView;    // To show the selected image
+    private ImageButton btnImgChoose;    // Choose the image
+    private ImageView imageView;         // To show the selected image
+
+    private ImageButton img_btnNext;
 
     private SessionManager session;
-    //private BitmapHandler bmpHandler;
+    private BitmapHandler bmpHandler;
 
     private Bundle extras;
 
@@ -49,12 +51,12 @@ public class SignupTeacherActivity extends Activity
         setContentView(R.layout.activity_signup_teacher);
 
         // Image choose button
-        btnImgChoose = (Button) findViewById(R.id.btn_nannypic);
+        btnImgChoose = (ImageButton) findViewById(R.id.btn_NannyPic);
         // View of the image
         imageView = (ImageView) findViewById(R.id.imageView);
 
         // Next button
-        ImageButton img_btnNext = (ImageButton) findViewById(R.id.img_btn_next);
+        img_btnNext = (ImageButton) findViewById(R.id.img_btn_next);
 
         // Inject the ButterKnife design
         ButterKnife.inject(this);
@@ -63,7 +65,7 @@ public class SignupTeacherActivity extends Activity
         session = new SessionManager(getApplicationContext());
 
         // Bitmap handler
-        //bmpHandler = new BitmapHandler(getApplicationContext());
+        bmpHandler = new BitmapHandler(getApplicationContext());
 
         // Create nanny object
         Nanny = new Teacher();
@@ -218,8 +220,7 @@ public class SignupTeacherActivity extends Activity
         }
 
         // Nanny Picture validation
-        //if (bmpHandler.GetBitmap() == null)
-        if (Nanny.GetPicture() == null)
+        if (bmpHandler.GetBitmap() == null)
         {
             onValidationFailed("Enter your picture !");
             valid = false;
@@ -239,10 +240,7 @@ public class SignupTeacherActivity extends Activity
         inputPhone.setText(Nanny.GetPhone());
 
         // Load the image
-        //bmpHandler.loadBitmap(Uri.parse(Nanny.GetPicture()), imageView);
-
-        // Load the image on the image view with picasso library
-        Picasso.with(getApplicationContext()).load(Uri.parse(Nanny.GetPicture())).into(imageView);
+        bmpHandler.loadBitmap(Uri.parse(Nanny.GetPicture()), imageView);
     }
 
     /**
@@ -291,10 +289,7 @@ public class SignupTeacherActivity extends Activity
                 // Check for the freshest data.
                 //getContentResolver().takePersistableUriPermission(image_path, takeFlags);
                 // Decode the image and set on the image view
-                //bmpHandler.loadBitmap(image_path, imageView);
-
-                // Set the image on the image view with picasso library
-                Picasso.with(getApplicationContext()).load(image_path).into(imageView);
+                bmpHandler.loadBitmap(image_path, imageView);
 
                 // Save the picture path in nanny object
                 Nanny.SetPicture(image_path.toString());

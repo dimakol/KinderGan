@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back2"
+    tools:context=".activities.TeacherActivity"
+    android:maxLines="1"
+    tools:ignore="Deprecated">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/baby5"
+        android:layout_width="169dp"
+        android:layout_height="159dp"
+        android:layout_x="11dp"
+        android:layout_y="401dp"
+        android:src="@drawable/baby"
+        app:civ_border_color="@color/color2"
+        app:civ_border_width="3dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/baby3"
+        android:layout_width="169dp"
+        android:layout_height="159dp"
+        android:layout_x="11dp"
+        android:layout_y="235dp"
+        android:src="@drawable/baby"
+        app:civ_border_color="@color/color2"
+        app:civ_border_width="3dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/baby6"
+        android:layout_width="169dp"
+        android:layout_height="159dp"
+        android:layout_x="195dp"
+        android:layout_y="401dp"
+        android:src="@drawable/baby"
+        app:civ_border_color="@color/color2"
+        app:civ_border_width="3dp" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/baby2"
+        android:layout_width="169dp"
+        android:layout_height="159dp"
+        android:layout_x="195dp"
+        android:layout_y="70dp"
+        android:src="@drawable/baby"
+        app:civ_border_color="@color/color2"
+        app:civ_border_width="3dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/baby4"
+        android:layout_width="169dp"
+        android:layout_height="159dp"
+        android:layout_x="195dp"
+        android:layout_y="235dp"
+        android:src="@drawable/baby"
+        app:civ_border_color="@color/color2"
+        app:civ_border_width="3dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/baby1"
+        android:layout_width="169dp"
+        android:layout_height="159dp"
+        android:layout_x="11dp"
+        android:layout_y="70dp"
+        android:src="@drawable/baby"
+        app:civ_border_color="@color/color2"
+        app:civ_border_width="3dp" />
+
+    <TextView
+        android:id="@+id/ganName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_x="-3dp"
+        android:layout_y="7dp"
+        android:gravity="center"
+        android:text="Gan Name Here"
+        android:textSize="20sp"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/clsNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_x="-3dp"
+        android:layout_y="28dp"
+        android:gravity="center"
+        android:text="Class Number"
+        android:textSize="20sp"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/frame"
+        android:layout_width="237dp"
+        android:layout_height="283dp"
+        android:layout_x="68dp"
+        android:layout_y="185dp"
+        android:alpha="0.75"
+        android:visibility="gone"
+        app:srcCompat="@drawable/fade"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/missBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="112dp"
+        android:layout_y="215dp"
+        android:background="@null"
+        android:visibility="gone"
+        app:srcCompat="@drawable/miss"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/arrvBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="112dp"
+        android:layout_y="215dp"
+        android:background="@null"
+        android:visibility="gone"
+        app:srcCompat="@drawable/arrived"
+        tools:ignore="ContentDescription" />
+
+
+    <ImageButton
+        android:id="@+id/BtnCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="112dp"
+        android:layout_y="271dp"
+        android:background="@null"
+        android:visibility="gone"
+        app:srcCompat="@drawable/call"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/BtnSms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="112dp"
+        android:layout_y="326dp"
+        android:background="@null"
+        android:visibility="gone"
+        app:srcCompat="@drawable/sms"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/BtnDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="111dp"
+        android:layout_y="384dp"
+        android:background="@null"
+        android:visibility="gone"
+        app:srcCompat="@drawable/details"
+        tools:ignore="ContentDescription" />
+
+
+    <ImageButton
+        android:id="@+id/BtnClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="273dp"
+        android:layout_y="193dp"
+        android:background="@null"
+        android:visibility="gone"
+        app:srcCompat="@drawable/close"
+        tools:ignore="ContentDescription" />
+
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".activities.TeacherActivity.test">
+
+        <com.devsoul.dima.kindergarten.fabbo.FabOptions
+            android:id="@+id/fab_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:button_menu="@menu/menu_faboptions"
+            app:background_color="@color/color1"
+            app:fab_color="@color/color2" />
+
+
+    </android.support.design.widget.CoordinatorLayout>
+</AbsoluteLayout>
