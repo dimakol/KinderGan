@@ -8,11 +8,9 @@ import com.devsoul.dima.kindergarten.R;
 /**
  * Teacher Main Activity screen
  */
-
-public class TeacherActivity extends Activity {
+public class TeacherActivity extends Activity
+{
     private TextView txtGan;
-
-
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);

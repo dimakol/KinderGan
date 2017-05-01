@@ -4,15 +4,16 @@ import java.io.Serializable;
 
 /**
  * This is the KinderGan class
- * @params ID, Name, Address, Classes, Phone
+ * @params ID, Name, Address, Classes, City, Phone
  */
 public class KinderGan implements Serializable
 {
     // Variables
-    private int ID;
+    private String ID;
     private String Name;
     private String Address;
     private int Classes;
+    private String City;
     private String Phone;
 
     // Constructor
@@ -23,19 +24,19 @@ public class KinderGan implements Serializable
         this.Name = Name;
     }
 
-    public KinderGan(String Name, String Address)
+    public KinderGan(String Name, String City)
     {
         this.Name = Name;
-        this.Address = Address;
+        this.City = City;
     }
 
     // Getters and Setters
     // ID
-    public void SetID(int ID)
+    public void SetID(String ID)
     {
         this.ID = ID;
     }
-    public int GetID()
+    public String GetID()
     {
         return this.ID;
     }
@@ -68,6 +69,16 @@ public class KinderGan implements Serializable
     public int GetClasses()
     {
         return this.Classes;
+    }
+
+    // City
+    public void SetCity(String City)
+    {
+        this.City = City;
+    }
+    public String GetCity()
+    {
+        return this.City;
     }
 
     // Phone

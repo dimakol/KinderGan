@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.*;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import butterknife.ButterKnife;
@@ -31,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The login Activity is the main activity of the application.
+ * The Login Activity is the main activity of the application.
  */
 public class LoginActivity extends Activity
 {
@@ -167,6 +168,7 @@ public class LoginActivity extends Activity
         if (email.isEmpty())
         {
             inputEmail.setError("Enter a valid email address");
+            requestFocus(inputEmail);
             valid = false;
         }
         else
@@ -178,6 +180,8 @@ public class LoginActivity extends Activity
         if (password.isEmpty() || password.length() > 20)
         {
             inputPassword.setError("Enter a valid password");
+            if (valid == true)
+                requestFocus(inputPassword);
             valid = false;
         }
         else
@@ -193,6 +197,18 @@ public class LoginActivity extends Activity
         }
 
         return valid;
+    }
+
+    /**
+     * Set focus on view
+     * @param view
+     */
+    private void requestFocus(View view)
+    {
+        if (view.requestFocus())
+        {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     /**
@@ -244,13 +260,16 @@ public class LoginActivity extends Activity
                             Nanny.SetPhone(user.getString("phone"));
                             Nanny.SetPicture(user.getString("photo"));
                             Gan.SetName(user.getString("kindergan_name"));
-                            Gan.SetAddress(user.getString("kindergan_address"));
+                            Gan.SetCity(user.getString("kindergan_city"));
                             Nanny.SetClass(user.getString("kindergan_class"));
                             Nanny.SetEmail(user.getString("email"));
                             Nanny.SetCreatedAt(user.getString("created_at"));
 
                             // Inserting row in teachers table
                             db.addTeacher(Nanny, Gan);
+
+                            // Create type session
+                            session.setType(1);
                         }
                         else if (jType == 2)
                         // Parent
@@ -275,10 +294,14 @@ public class LoginActivity extends Activity
                             child.SetPicture(user.getString("kid_photo"));
                             child.SetClass(user.getString("kid_class"));
                             Gan.SetName(user.getString("kindergan_name"));
+                            child.SetParentID(user.getString("ID"));
                             child.SetCreatedAt(user.getString("created_at"));
 
                             // Inserting row in kids table
                             db.addKid(child, Gan);
+
+                            // Create type session
+                            session.setType(2);
                         }
 
                         // Create login session

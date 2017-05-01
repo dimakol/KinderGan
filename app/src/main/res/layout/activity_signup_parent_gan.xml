@@ -15,19 +15,33 @@
         android:fitsSystemWindows="true"
         tools:context=".activities.SignupParentGanActivity">
 
+    <!--  KinderGan City Spinner -->
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/android_material_design_spinner3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_KGanCityDropdown"
+            android:textColorHint="@color/colorAccent"
+            app:met_baseColor="@color/white"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="@string/hint_KGanCity"
+            app:met_floatingLabelTextColor="@color/colorAccent"
+            app:met_primaryColor="@color/white"
+            app:met_textColorHint="@color/white" />
+
     <!--  KinderGan Name Spinner -->
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/android_material_design_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/hint_KGanNameDropdown"
+            android:textColorHint="@color/colorAccent"
+            app:met_baseColor="@color/white"
             app:met_floatingLabel="highlight"
             app:met_floatingLabelText="@string/hint_KGanName"
-            app:met_baseColor="@color/white"
-            app:met_primaryColor="@color/white"
-            app:met_textColorHint="@color/white"
             app:met_floatingLabelTextColor="@color/colorAccent"
-            android:textColorHint="@color/colorAccent" />
+            app:met_primaryColor="@color/white"
+            app:met_textColorHint="@color/white" />
 
     <!--  KinderGan Class Spinner -->
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
@@ -38,25 +52,10 @@
             android:textColorHint="@color/colorAccent"
             app:met_baseColor="@color/white"
             app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="Class Name"
+            app:met_floatingLabelText="Class Number"
             app:met_floatingLabelTextColor="@color/colorAccent"
             app:met_primaryColor="@color/white"
             app:met_textColorHint="@color/white" />
-
-    <!-- Password Label -->
-    <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout">
-        <EditText
-                android:id="@+id/input_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_password"
-                android:inputType="textPassword"
-                android:textColor="@color/white" />
-    </android.support.design.widget.TextInputLayout>
 
     <!--  Kid's First Name Label -->
     <android.support.design.widget.TextInputLayout

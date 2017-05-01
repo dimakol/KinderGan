@@ -108,6 +108,20 @@ public class BitmapHandler
     }
 
     /**
+     * Convert Bitmap to base64 String.
+     * @param bmp - Bitmap
+     * @return encodedImage
+     */
+    public String getStringImage(Bitmap bmp)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
+
+    /**
      * To start loading the bitmap asynchronously with AsyncTask
      * @param uri - path of bitmap
      * @param imageView - the image view on which the bitmap will load
@@ -156,19 +170,5 @@ public class BitmapHandler
                 }
             }
         }
-    }
-
-    /**
-     * Convert Bitmap to base64 String.
-     * @param bmp - Bitmap
-     * @return encodedImage
-     */
-    public String getStringImage(Bitmap bmp)
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodedImage;
     }
 }

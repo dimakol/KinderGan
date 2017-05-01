@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">KinderGan</string>
+    <string name="welcome">Welcome</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="hint_FName">First Name</string>
@@ -12,6 +13,8 @@
     <string name="hint_pic">User Picture</string>
     <string name="hint_KidPic">Child\'s Picture</string>
     <string name="hint_NannyPic">Teacher\'s Picture</string>
+    <string name="hint_KGanCity">KinderGan City</string>
+    <string name="hint_KGanCityDropdown">Select City</string>
     <string name="hint_KGanName">KinderGan Name</string>
     <string name="hint_KGanNameDropdown">Select Gan</string>
     <string name="hint_KGanAddress">KinderGan Address</string>
@@ -19,12 +22,12 @@
     <string name="hint_KGanClassDropdown">Select Class</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_register">REGISTER</string>
-    <string name="SignUp_lnk">Don\'t have an account? <b>Sign Up</b></string>
-    <string name="login_lnk">Already a member? Login</string>
-    <string name="welcome">Welcome</string>
     <string name="btn_logout">LOGOUT</string>
     <string name="btn_parent">Parent</string>
     <string name="btn_nanny">Nanny</string>
     <string name="btn_next">Next</string>
     <string name="btn_back">Back</string>
+    <string name="SignUp_lnk">Don\'t have an account?<b>Sign Up</b></string>
+    <string name="login_lnk">Already a member? Login</string>
+    <string name="btn_contact">Contact the teacher</string>
 </resources>

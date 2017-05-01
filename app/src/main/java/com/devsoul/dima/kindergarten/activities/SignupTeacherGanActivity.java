@@ -1,12 +1,9 @@
 package com.devsoul.dima.kindergarten.activities;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,29 +24,32 @@ import com.devsoul.dima.kindergarten.app.AppController;
 import com.devsoul.dima.kindergarten.helper.BitmapHandler;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
-import com.devsoul.dima.kindergarten.model.Kid;
 import com.devsoul.dima.kindergarten.model.KinderGan;
-import com.devsoul.dima.kindergarten.model.Parent;
+import com.devsoul.dima.kindergarten.model.Teacher;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
- * The Signup ParentGan Activity enables the user that is a parent to create an account in the application,
- * and is generally displayed via the next button on the Sign Up Parent Activity.
+ * The Signup TeacherGan Activity enables the user that is a teacher to create an account in the application,
+ * and is generally displayed via the next button on the Sign Up Teacher Activity.
  */
-public class SignupParentGanActivity extends Activity
+public class SignupTeacherGanActivity extends Activity
 {
-    private static final String TAG = SignupParentGanActivity.class.getSimpleName();
-
-    private static final int PICK_IMAGE_REQUEST = 1; // To get Image from gallery
-    private static final int DIALOG_ID = 0;         // Dialog for date
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private static final String TAG = SignupTeacherGanActivity.class.getSimpleName();
+    private static final String PASSWORD_PATTERN =
+                    "((?=.*\\d)" +        // must contains one digit from 0-9
+                    "(?=.*[a-z])" +       // must contains one lowercase characters
+                    "(?=.*[A-Z])" +       // must contains one uppercase characters
+                    "(?=.*[!@#$%])" +     // must contains one special symbols in the list "!@#$%"
+                    "(?!.*\\s)" +         // disallow spaces
+                    ".{8,15})";           // length at least 8 characters and maximum of 15
 
     //An ArrayLists for Spinners Items
     private ArrayList<String> CITY_LIST;
@@ -59,29 +59,20 @@ public class SignupParentGanActivity extends Activity
     //Declaring Spinners
     private MaterialBetterSpinner dropdownKinderGanCity;
     private MaterialBetterSpinner dropdownKinderGanName;
-    private MaterialBetterSpinner dropdownKidClass;
+    private MaterialBetterSpinner dropdownTeacherClass;
 
-    @InjectView(R.id.input_FName) EditText inputKidFirstName;
-    @InjectView(R.id.input_KidBirthDate) EditText inputKidBirthDate;
+    @InjectView(R.id.input_email) EditText inputEmail;
+    @InjectView(R.id.input_password) EditText inputPassword;
     @InjectView(R.id.link_login) TextView btnLinkToLogin;
 
-    private ImageButton btnImgChoose;    // Choose the kid's profile image
-    private ImageView imageView;         // To show the selected image
-    private Uri image_path;              // Path of the image
-
     private ImageButton img_btnBack, img_btnRegister;
-
-    // For kid birth date
-    private Calendar calendar;
-    private int year, month, day;
 
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
     private BitmapHandler bmpHandler;
 
-    private Parent parent;
-    private Kid child;
+    private Teacher Nanny;
     private KinderGan Gan;
 
     private int classes;
@@ -90,7 +81,7 @@ public class SignupParentGanActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup_parent_gan);
+        setContentView(R.layout.activity_signup_teacher_gan);
 
         //Initializing the ArrayLists
         CITY_LIST = new ArrayList<String>();
@@ -100,12 +91,8 @@ public class SignupParentGanActivity extends Activity
         //Initializing Spinners
         dropdownKinderGanCity = (MaterialBetterSpinner)findViewById(R.id.android_material_design_spinner3);
         dropdownKinderGanName =(MaterialBetterSpinner)findViewById(R.id.android_material_design_spinner);
-        dropdownKidClass =(MaterialBetterSpinner)findViewById(R.id.android_material_design_spinner2);
+        dropdownTeacherClass =(MaterialBetterSpinner)findViewById(R.id.android_material_design_spinner2);
 
-        // Image choose button
-        btnImgChoose = (ImageButton) findViewById(R.id.btn_KidPic);
-        // View of the image
-        imageView = (ImageView) findViewById(R.id.imageView);
         // Back button
         img_btnBack = (ImageButton) findViewById(R.id.img_btn_back);
         // Register button
@@ -113,12 +100,6 @@ public class SignupParentGanActivity extends Activity
 
         // Inject the ButterKnife design
         ButterKnife.inject(this);
-
-        // Set calendar date to today date
-        calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -130,14 +111,11 @@ public class SignupParentGanActivity extends Activity
         // SQLite database handler
         db = new SQLiteHandler(getApplicationContext());
 
-        // Bitmap handler
-        bmpHandler = new BitmapHandler(getApplicationContext());
-
         // Check if user is already logged in or not
         if (session.isLoggedIn())
         {
             // User is already logged in. Take him to user activity
-            Intent intent = new Intent(SignupParentGanActivity.this, UserActivity.class);
+            Intent intent = new Intent(SignupTeacherGanActivity.this, UserActivity.class);
             startActivity(intent);
             finish();
         }
@@ -146,27 +124,23 @@ public class SignupParentGanActivity extends Activity
         loadCitiesSpinnerData();
 
         // To retrieve objects in current activity
-        parent = (Parent) getIntent().getSerializableExtra("parent");
+        Nanny = (Teacher) getIntent().getSerializableExtra("teacher");
         Gan = (KinderGan) getIntent().getSerializableExtra("kindergan");
-        child = (Kid) getIntent().getSerializableExtra("kid");
-        if ((Gan != null) && (child != null))
-        // Has object of gan and child from previous activity (SignUpParent Activity)
+        if (Gan != null)
+        // Has object of Gan from previous activity (SignUpTeacher Activity)
         {
-            // Load fields of KinderGan and Kid
+            // Load fields of KinderGan
             LoadFields();
         }
         else
         {
-            // Create new objects
-            child = new Kid();
-            Gan = new KinderGan();
             classes = 0;
         }
 
         //Setting adapters to show the items in the spinners
-        dropdownKinderGanCity.setAdapter(new ArrayAdapter<String>(SignupParentGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CITY_LIST));
-        dropdownKinderGanName.setAdapter(new ArrayAdapter<String>(SignupParentGanActivity.this, android.R.layout.simple_spinner_dropdown_item, GAN_LIST));
-        dropdownKidClass.setAdapter(new ArrayAdapter<String>(SignupParentGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CLASS_LIST));
+        dropdownKinderGanCity.setAdapter(new ArrayAdapter<String>(SignupTeacherGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CITY_LIST));
+        dropdownKinderGanName.setAdapter(new ArrayAdapter<String>(SignupTeacherGanActivity.this, android.R.layout.simple_spinner_dropdown_item, GAN_LIST));
+        dropdownTeacherClass.setAdapter(new ArrayAdapter<String>(SignupTeacherGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CLASS_LIST));
 
         // On KinderGan city item selected
         dropdownKinderGanCity.addTextChangedListener(new TextWatcher()
@@ -192,7 +166,7 @@ public class SignupParentGanActivity extends Activity
                 GAN_LIST = db.getKinderGanNamesbyCity(selected);
                 Log.d(TAG, "Gan Names List: " + GAN_LIST);
                 //Setting adapter to show the items in the spinner
-                dropdownKinderGanName.setAdapter(new ArrayAdapter<String>(SignupParentGanActivity.this, android.R.layout.simple_spinner_dropdown_item, GAN_LIST));
+                dropdownKinderGanName.setAdapter(new ArrayAdapter<String>(SignupTeacherGanActivity.this, android.R.layout.simple_spinner_dropdown_item, GAN_LIST));
                 // Clear the showing text in name spinner
                 dropdownKinderGanName.setText("");
             }
@@ -223,28 +197,7 @@ public class SignupParentGanActivity extends Activity
                 Gan.SetClasses(classes);
                 LoadClassSpinner(Gan.GetClasses());
                 // Clear the showing text in class spinner
-                dropdownKidClass.setText("");
-            }
-        });
-
-        // Kid birth date Button Click event
-        inputKidBirthDate.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                setDate();
-            }
-        });
-
-        // Image choose Button Click event
-        btnImgChoose.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                // Show images in gallery
-                showFileChooser();
+                dropdownTeacherClass.setText("");
             }
         });
 
@@ -257,48 +210,23 @@ public class SignupParentGanActivity extends Activity
                 // Save all the fields in current page
                 String KinderGan_city = dropdownKinderGanCity.getText().toString();
                 String KinderGan_name = dropdownKinderGanName.getText().toString();
-                String Kid_Class = dropdownKidClass.getText().toString();
-                String Kid_FName = inputKidFirstName.getText().toString().trim();
-                String Kid_BirthDate = inputKidBirthDate.getText().toString().trim();
+                String teacher_class = dropdownTeacherClass.getText().toString();
+                String email = inputEmail.getText().toString().trim();
+                String password = inputPassword.getText().toString().trim();
 
-                if (Gan != null)
-                {
-                    Gan.SetCity(KinderGan_city);
-                    Gan.SetName(KinderGan_name);
-                    // Class already in Gan object
-                }
-                else
-                {
-                    Gan = new KinderGan(KinderGan_name, KinderGan_city);
-                    if (classes != 0)
-                        Gan.SetClasses(classes);
-                }
+                Gan = new KinderGan(KinderGan_name, KinderGan_city);
+                if (classes != 0)
+                    Gan.SetClasses(classes);
+                Nanny.SetClass(teacher_class);
+                Nanny.SetEmail(email);
+                Nanny.SetPassword(password);
 
-                if (child != null)
-                {
-                    child.SetName(Kid_FName);
-                    child.SetClass(Kid_Class);
-                    child.SetBirthDate(Kid_BirthDate);
-                }
-                else
-                // First visit in activity
-                {
-                    // With picture
-                    if (image_path != null)
-                        child = new Kid(Kid_FName, Kid_Class, Kid_BirthDate, image_path.toString());
-                    // Without picture
-                    else
-                        child = new Kid(Kid_FName, Kid_Class, Kid_BirthDate);
-                }
-
-                // Go to previous page of registration (parent Info)
-                Intent i = new Intent(SignupParentGanActivity.this, SignupParentActivity.class);
-                //To pass object of parent to previous activity
-                i.putExtra("parent", parent);
+                // Go to previous page of registration (teacher Info)
+                Intent i = new Intent(SignupTeacherGanActivity.this, SignupTeacherActivity.class);
+                //To pass object of teacher to previous activity
+                i.putExtra("teacher", Nanny);
                 //To pass object of gan to previous activity
                 i.putExtra("kindergan", Gan);
-                //To pass object of kid to previous activity
-                i.putExtra("kid", child);
                 startActivity(i);
                 finish();
             }
@@ -320,61 +248,15 @@ public class SignupParentGanActivity extends Activity
             @Override
             public void onClick(View v)
             {
-                Intent i = new Intent(SignupParentGanActivity.this, LoginActivity.class);
+                Intent i = new Intent(SignupTeacherGanActivity.this, LoginActivity.class);
                 startActivity(i);
                 finish();
             }
         });
     }
 
-    @SuppressWarnings("deprecation")
-    public void setDate()
-    {
-        // onCreateDialog method called
-        showDialog(DIALOG_ID);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    protected Dialog onCreateDialog(int id)
-    {
-        if (id == DIALOG_ID)
-        {
-            return new DatePickerDialog(this, myDateListener, year, month, day);
-        }
-        return null;
-    }
-
-    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener()
-    {
-        /**
-         * Set the date that was chosen
-         * @param arg0 - The object
-         * @param arg1 - Year
-         * @param arg2 - Month
-         * @param arg3 - Day
-         */
-        @Override
-        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3)
-        {
-            showDate(arg1, arg2+1, arg3);
-        }
-    };
-
     /**
-     * Show the date that was chosen in the kid birth date input text
-     * @param year
-     * @param month
-     * @param day
-     */
-    private void showDate(int year, int month, int day)
-    {
-        inputKidBirthDate.setText(new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
-    }
-
-    /**
-     * This function load the fields of KinderGan and Kid in current activity
+     * This function load the fields of KinderGan in current activity
      */
     public void LoadFields()
     {
@@ -392,81 +274,10 @@ public class SignupParentGanActivity extends Activity
             // Populate the class spinner
             LoadClassSpinner(Gan.GetClasses());
         }
-        dropdownKidClass.setText(child.GetClass());
-        inputKidFirstName.setText(child.GetName());
+        dropdownTeacherClass.setText(Nanny.GetClass());
 
-        // Birth date selected
-        if (child.GetBirthDate() != null)
-        {
-            // Load the birth date
-            inputKidBirthDate.setText(child.GetBirthDate());
-        }
-
-        // Picture selected
-        if (child.GetPicture() != null)
-        {
-            // Load the image
-            bmpHandler.loadBitmap(Uri.parse(child.GetPicture()), imageView);
-        }
-    }
-
-    /**
-     * This method for choosing image from gallery
-     */
-    private void showFileChooser()
-    {
-        Intent intent;
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        // The current version is Kitkat or higher
-        {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        }
-        else
-        // The current version is lower than Kitkat
-        {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-        }
-
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setType("image/*");
-
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    /**
-     * Get the Uri of bitmap from gallery
-     * Decode the image and set it on the image view
-     */
-    //@TargetApi(Build.VERSION_CODES.KITKAT)
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
-        {
-            image_path = data.getData();
-            try
-            {
-                //final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                // Check for the freshest data.
-                //getContentResolver().takePersistableUriPermission(image_path, takeFlags);
-                // Decode the image and set on the image view
-                bmpHandler.loadBitmap(image_path, imageView);
-
-                // Save the picture path in child object
-                child.SetPicture(image_path.toString());
-            }
-            catch (Exception e)
-            {
-                //handle exception
-                e.printStackTrace();
-            }
-        }
+        inputEmail.setText(Nanny.GetEmail());
+        inputPassword.setText(Nanny.GetPassword());
     }
 
     /**
@@ -474,19 +285,18 @@ public class SignupParentGanActivity extends Activity
      */
     public void signup()
     {
-        Log.d(TAG, "SignupParentGan");
+        Log.d(TAG, "SignupTeacherGan");
 
         String KinderGanCity = dropdownKinderGanCity.getText().toString().trim();
         String KinderGanName = dropdownKinderGanName.getText().toString().trim();
-        String KidClass = dropdownKidClass.getText().toString().trim();
-        String KidName = inputKidFirstName.getText().toString().trim();
-        String KidBirthDate = inputKidBirthDate.getText().toString().trim();
+        String TeacherClass = dropdownTeacherClass.getText().toString().trim();
+        String email = inputEmail.getText().toString().trim();
+        String password = inputPassword.getText().toString().trim();
 
-        Gan.SetCity(KinderGanCity);
-        Gan.SetName(KinderGanName);
-        child.SetName(KidName);
-        child.SetClass(KidClass);
-        child.SetBirthDate(KidBirthDate);
+        Gan = new KinderGan(KinderGanName, KinderGanCity);
+        Nanny.SetClass(TeacherClass);
+        Nanny.SetEmail(email);
+        Nanny.SetPassword(password);
 
         // One of the fields is invalid
         if (!validate())
@@ -518,7 +328,7 @@ public class SignupParentGanActivity extends Activity
         // KinderGan City validation
         if (Gan.GetCity().isEmpty())
         {
-            dropdownKinderGanCity.setError("Choose your child's kindergan city !");
+            dropdownKinderGanCity.setError("Choose your kindergan city !");
             requestFocus(dropdownKinderGanCity);
             valid = false;
         }
@@ -530,7 +340,7 @@ public class SignupParentGanActivity extends Activity
         // KinderGan Name validation
         if (Gan.GetName().isEmpty())
         {
-            dropdownKinderGanName.setError("Choose your child's kindergan name !");
+            dropdownKinderGanName.setError("Choose your kindergan name !");
             if (valid == true)
                 requestFocus(dropdownKinderGanName);
             valid = false;
@@ -540,56 +350,44 @@ public class SignupParentGanActivity extends Activity
             dropdownKinderGanName.setError(null);
         }
 
-        // Kid's class validation
-        if (child.GetClass().isEmpty())
+        // Teacher's class validation
+        if (Nanny.GetClass().isEmpty())
         {
-            dropdownKidClass.setError("Choose your child's kindergan class !");
+            dropdownTeacherClass.setError("Choose your kindergan class !");
             if (valid == true)
-                requestFocus(dropdownKidClass);
+                requestFocus(dropdownTeacherClass);
             valid = false;
         }
         else
         {
-            dropdownKidClass.setError(null);
+            dropdownTeacherClass.setError(null);
         }
 
-        // Kid First Name validation
-        if (child.GetName().isEmpty())
+        // Email validation
+        if (Nanny.GetEmail().isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(Nanny.GetEmail()).matches())
         {
-            inputKidFirstName.setError("Enter your child's first name !");
+            inputEmail.setError("Enter a valid email address !");
             if (valid == true)
-                requestFocus(inputKidFirstName);
+                requestFocus(inputEmail);
             valid = false;
         }
         else
         {
-            inputKidFirstName.setError(null);
+            inputEmail.setError(null);
         }
 
-        // Kid Birth Date validation
-        try
+        // Password validation
+        if (!Pattern.compile(PASSWORD_PATTERN).matcher(Nanny.GetPassword()).matches())
         {
-            if (inputKidBirthDate.getText().toString().isEmpty() ||
-                    (formatter.parse(inputKidBirthDate.getText().toString()).after(new Date())))
-            {
-                inputKidBirthDate.setError("Enter your child's birth date !");
-                valid = false;
-            }
-            else
-            {
-                inputKidBirthDate.setError(null);
-            }
-        }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
-
-        // Kid Picture validation
-        if (bmpHandler.GetBitmap() == null)
-        {
-            onSignupFailed("Enter your child's picture !");
+            inputPassword.setError("Password must be at least 8 characters.\n" +
+                    "Use numbers, symbols and mix of upper and lower case letters !");
+            if (valid == true)
+                requestFocus(inputPassword);
             valid = false;
+        }
+        else
+        {
+            inputPassword.setError(null);
         }
 
         return valid;
@@ -636,40 +434,31 @@ public class SignupParentGanActivity extends Activity
                     // Check for error node in json
                     if (!error)
                     {
-                        // Parent user successfully stored in MySQL
-                        // Now store the parent user in SQLite
+                        // Teacher user successfully stored in MySQL
+                        // Now store the teacher user in SQLite
                         JSONObject user = jObj.getJSONObject("user");
-                        parent.SetID(user.getString("ID"));
-                        parent.SetFirstName(user.getString("firstname"));
-                        parent.SetLastName(user.getString("lastname"));
-                        parent.SetAddress(user.getString("address"));
-                        parent.SetPhone(user.getString("phone"));
-                        parent.SetEmail(user.getString("email"));
-                        parent.SetCreatedAt(user.getString("created_at"));
-
-                        // Inserting row in parents table
-                        db.addParent(parent);
-
-                        // Now store the child user in SQLite
-                        child.SetName(user.getString("kid_name"));
-                        child.SetBirthDate(user.getString("kid_birthdate"));
-                        child.SetPicture(user.getString("kid_photo"));
-                        child.SetClass(user.getString("kid_class"));
+                        Nanny.SetID(user.getString("ID"));
+                        Nanny.SetFirstName(user.getString("firstname"));
+                        Nanny.SetLastName(user.getString("lastname"));
+                        Nanny.SetPhone(user.getString("phone"));
+                        Nanny.SetPicture(user.getString("photo"));
                         Gan.SetName(user.getString("kindergan_name"));
-                        child.SetParentID(user.getString("ID"));
-                        child.SetCreatedAt(user.getString("created_at"));
+                        Gan.SetCity(user.getString("kindergan_city"));
+                        Nanny.SetClass(user.getString("kindergan_class"));
+                        Nanny.SetEmail(user.getString("email"));
+                        Nanny.SetCreatedAt(user.getString("created_at"));
 
-                        // Inserting row in kids table
-                        db.addKid(child, Gan);
+                        // Inserting row in teachers table
+                        db.addTeacher(Nanny, Gan);
 
                         session.setLogin(true);
                         // Create type session
-                        session.setType(2);
+                        session.setType(1);
 
                         Toast.makeText(getApplicationContext(), "User successfully registered.", Toast.LENGTH_LONG).show();
 
                         // Launch user activity
-                        Intent intent = new Intent(SignupParentGanActivity.this, UserActivity.class);
+                        Intent intent = new Intent(SignupTeacherGanActivity.this, UserActivity.class);
                         startActivity(intent);
                         finish();
                     }
@@ -701,22 +490,19 @@ public class SignupParentGanActivity extends Activity
             {
                 // Posting parameters to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "register_parent");
-                params.put("ID", parent.GetID());
-                params.put("First_Name", parent.GetFirstName());
-                params.put("Last_Name", parent.GetLastName());
-                params.put("Address", parent.GetAddress());
-                params.put("Phone", parent.GetPhone());
-
-                params.put("Kid_Name", child.GetName());
-                params.put("Kid_BirthDate", child.GetBirthDate());
+                params.put("tag", "register_teacher");
+                params.put("ID", Nanny.GetID());
+                params.put("First_Name", Nanny.GetFirstName());
+                params.put("Last_Name", Nanny.GetLastName());
+                params.put("Phone", Nanny.GetPhone());
                 //Converting Bitmap to String
-                String image = bmpHandler.getStringImage(bmpHandler.decodeSampledBitmapFromStream(Uri.parse(child.GetPicture()), 300, 300));
-                params.put("Kid_Picture", image);
+                String image = bmpHandler.getStringImage(bmpHandler.decodeSampledBitmapFromStream(Uri.parse(Nanny.GetPicture()), 300, 300));
+                params.put("Picture", image);
                 params.put("KinderGan_Name", Gan.GetName());
-                params.put("Kid_Class", child.GetClass());
-                params.put("Email", parent.GetEmail());
-                params.put("Password", parent.GetPassword());
+                params.put("KinderGan_City", Gan.GetCity());
+                params.put("Class", Nanny.GetClass());
+                params.put("Email", Nanny.GetEmail());
+                params.put("Password", Nanny.GetPassword());
 
                 return params;
             }
@@ -724,7 +510,7 @@ public class SignupParentGanActivity extends Activity
 
         //Set a retry policy in case of SocketTimeout & ConnectionTimeout Exceptions.
         //Volley does retry for you if you have specified the policy.
-        strReq.setRetryPolicy(new DefaultRetryPolicy(5000,
+        strReq.setRetryPolicy(new DefaultRetryPolicy(7000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
@@ -782,6 +568,7 @@ public class SignupParentGanActivity extends Activity
                         // Kindergans successfully loaded from MySQL
                         // Now store the Kindergans in SQLite
                         JSONArray gans = jObj.getJSONArray("Gans");
+                        Gan = new KinderGan();
                         for (int i = 0; i < gans.length(); i++)
                         {
                             JSONObject gan = gans.getJSONObject(i);
@@ -868,7 +655,7 @@ public class SignupParentGanActivity extends Activity
         CITY_LIST = db.getKinderGanCities();
         Log.d(TAG, "Gan Cities List: " + CITY_LIST);
         //Setting adapters to show the items in the spinners
-        dropdownKinderGanCity.setAdapter(new ArrayAdapter<String>(SignupParentGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CITY_LIST));
+        dropdownKinderGanCity.setAdapter(new ArrayAdapter<String>(SignupTeacherGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CITY_LIST));
     }
 
     /**
@@ -885,6 +672,6 @@ public class SignupParentGanActivity extends Activity
         }
         Log.d(TAG, "Class List: " + CLASS_LIST);
         //Setting adapter to show the items in the spinner
-        dropdownKidClass.setAdapter(new ArrayAdapter<String>(SignupParentGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CLASS_LIST));
+        dropdownTeacherClass.setAdapter(new ArrayAdapter<String>(SignupTeacherGanActivity.this, android.R.layout.simple_spinner_dropdown_item, CLASS_LIST));
     }
 }

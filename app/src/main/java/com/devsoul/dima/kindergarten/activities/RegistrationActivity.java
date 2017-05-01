@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import com.devsoul.dima.kindergarten.R;
 
 /**
- * The Registration Activity is the activity where the user choose his category: parent or Nanny
+ * The Registration Activity is the activity where the user choose his category: Parent or Nanny
  */
 public class RegistrationActivity extends Activity
 {

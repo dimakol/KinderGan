@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -130,7 +131,7 @@ public class SignupTeacherActivity extends Activity
                     Nanny.SetPhone(Phone);
 
                     // Go to next page of registration (KinderGan Info)
-                    Intent i = new Intent(SignupTeacherActivity.this, SignupKinderGanActivity.class);
+                    Intent i = new Intent(SignupTeacherActivity.this, SignupTeacherGanActivity.class);
                     // To pass object of Nanny to next activity
                     i.putExtra("teacher", Nanny);
                     // Has object of KinderGan
@@ -179,6 +180,7 @@ public class SignupTeacherActivity extends Activity
         if (inputID.getText().toString().isEmpty())
         {
             inputID.setError("Enter your ID !");
+            requestFocus(inputID);
             valid = false;
         }
         else
@@ -187,9 +189,11 @@ public class SignupTeacherActivity extends Activity
         }
 
         // First name validation
-        if (inputFirstName.getText().toString().isEmpty())
+        if (inputFirstName.getText().toString().isEmpty() || inputFirstName.getText().toString().contains("-"))
         {
             inputFirstName.setError("Enter your first name !");
+            if (valid == true)
+                requestFocus(inputFirstName);
             valid = false;
         }
         else
@@ -198,9 +202,11 @@ public class SignupTeacherActivity extends Activity
         }
 
         // Last name validation
-        if (inputLastName.getText().toString().isEmpty())
+        if (inputLastName.getText().toString().isEmpty() || inputLastName.getText().toString().contains("-"))
         {
             inputLastName.setError("Enter your last name !");
+            if (valid == true)
+                requestFocus(inputLastName);
             valid = false;
         }
         else
@@ -212,6 +218,8 @@ public class SignupTeacherActivity extends Activity
         if (inputPhone.getText().toString().isEmpty())
         {
             inputPhone.setError("Enter your phone !");
+            if (valid == true)
+                requestFocus(inputPhone);
             valid = false;
         }
         else
@@ -227,6 +235,18 @@ public class SignupTeacherActivity extends Activity
         }
 
         return valid;
+    }
+
+    /**
+     * Set focus on view
+     * @param view
+     */
+    private void requestFocus(View view)
+    {
+        if (view.requestFocus())
+        {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     /**

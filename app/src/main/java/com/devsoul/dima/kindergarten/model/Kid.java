@@ -13,6 +13,7 @@ public class Kid implements Serializable
     private String BirthDate;
     private String Picture;
     private String Class;
+    private String Parent_ID;
     private String Created_at;
 
     // Constructor
@@ -78,6 +79,16 @@ public class Kid implements Serializable
     public String GetClass()
     {
         return this.Class;
+    }
+
+    // Parent ID
+    public void SetParentID(String ID)
+    {
+        this.Parent_ID = ID;
+    }
+    public String GetParentID()
+    {
+        return this.Parent_ID;
     }
 
     // Created_at

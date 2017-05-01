@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,6 +17,8 @@ import com.devsoul.dima.kindergarten.model.Kid;
 import com.devsoul.dima.kindergarten.model.KinderGan;
 import com.devsoul.dima.kindergarten.model.Parent;
 
+import java.util.regex.Pattern;
+
 /**
  * The Signup parent Activity enables the user that is a parent to create an account in the application,
  * and is generally displayed via the link on the Registration Activity.
@@ -23,6 +26,13 @@ import com.devsoul.dima.kindergarten.model.Parent;
 public class SignupParentActivity extends Activity
 {
     private static final String TAG = SignupParentActivity.class.getSimpleName();
+    private static final String PASSWORD_PATTERN =
+            "((?=.*\\d)" +        // must contains one digit from 0-9
+                    "(?=.*[a-z])" +       // must contains one lowercase characters
+                    "(?=.*[A-Z])" +       // must contains one uppercase characters
+                    "(?=.*[!@#$%])" +     // must contains one special symbols in the list "!@#$%"
+                    "(?!.*\\s)" +         // disallow spaces
+                    ".{8,15})";           // length at least 8 characters and maximum of 15
 
     @InjectView(R.id.input_id) EditText inputID;
     @InjectView(R.id.input_FName) EditText inputFirstName;
@@ -30,6 +40,7 @@ public class SignupParentActivity extends Activity
     @InjectView(R.id.input_phone) EditText inputPhone;
     @InjectView(R.id.input_address) EditText inputAddress;
     @InjectView(R.id.input_email) EditText inputEmail;
+    @InjectView(R.id.input_password) EditText inputPassword;
     @InjectView(R.id.link_login) TextView btnLinkToLogin;
     private ImageButton img_btnNext;
 
@@ -103,6 +114,7 @@ public class SignupParentActivity extends Activity
                     String Phone = inputPhone.getText().toString().trim();
                     String Address = inputAddress.getText().toString().trim();
                     String Email = inputEmail.getText().toString().trim();
+                    String password = inputPassword.getText().toString().trim();
 
                     parent.SetID(ID);
                     parent.SetFirstName(FName);
@@ -110,6 +122,7 @@ public class SignupParentActivity extends Activity
                     parent.SetPhone(Phone);
                     parent.SetAddress(Address);
                     parent.SetEmail(Email);
+                    parent.SetPassword(password);
 
                     // Go to next page of registration (KinderGan + Kid Info)
                     Intent i = new Intent(SignupParentActivity.this, SignupParentGanActivity.class);
@@ -163,6 +176,7 @@ public class SignupParentActivity extends Activity
         if (inputID.getText().toString().isEmpty())
         {
             inputID.setError("Enter your ID !");
+            requestFocus(inputID);
             valid = false;
         }
         else
@@ -171,9 +185,11 @@ public class SignupParentActivity extends Activity
         }
 
         // First name validation
-        if (inputFirstName.getText().toString().isEmpty())
+        if (inputFirstName.getText().toString().isEmpty() || inputFirstName.getText().toString().contains("-"))
         {
             inputFirstName.setError("Enter your first name !");
+            if (valid == true)
+                requestFocus(inputFirstName);
             valid = false;
         }
         else
@@ -182,9 +198,11 @@ public class SignupParentActivity extends Activity
         }
 
         // Last name validation
-        if (inputLastName.getText().toString().isEmpty())
+        if (inputLastName.getText().toString().isEmpty() || inputLastName.getText().toString().contains("-"))
         {
             inputLastName.setError("Enter your last name !");
+            if (valid == true)
+                requestFocus(inputLastName);
             valid = false;
         }
         else
@@ -196,6 +214,8 @@ public class SignupParentActivity extends Activity
         if (inputPhone.getText().toString().isEmpty())
         {
             inputPhone.setError("Enter your phone !");
+            if (valid == true)
+                requestFocus(inputPhone);
             valid = false;
         }
         else
@@ -207,6 +227,8 @@ public class SignupParentActivity extends Activity
         if (inputAddress.getText().toString().isEmpty())
         {
             inputAddress.setError("Enter your address !");
+            if (valid == true)
+                requestFocus(inputAddress);
             valid = false;
         }
         else
@@ -218,6 +240,8 @@ public class SignupParentActivity extends Activity
         if (inputEmail.getText().toString().isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(inputEmail.getText().toString()).matches())
         {
             inputEmail.setError("Enter a valid email address !");
+            if (valid == true)
+                requestFocus(inputEmail);
             valid = false;
         }
         else
@@ -225,7 +249,33 @@ public class SignupParentActivity extends Activity
             inputEmail.setError(null);
         }
 
+        // Password validation
+        if (!Pattern.compile(PASSWORD_PATTERN).matcher(inputPassword.getText().toString()).matches())
+        {
+            inputPassword.setError("Password must be at least 8 characters.\n" +
+                    "Use numbers, symbols and mix of upper and lower case letters !");
+            if (valid == true)
+                requestFocus(inputPassword);
+            valid = false;
+        }
+        else
+        {
+            inputPassword.setError(null);
+        }
+
         return valid;
+    }
+
+    /**
+     * Set focus on view
+     * @param view
+     */
+    private void requestFocus(View view)
+    {
+        if (view.requestFocus())
+        {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     /**
@@ -239,5 +289,6 @@ public class SignupParentActivity extends Activity
         inputPhone.setText(parent.GetPhone());
         inputAddress.setText(parent.GetAddress());
         inputEmail.setText(parent.GetEmail());
+        inputPassword.setText(parent.GetPassword());
     }
 }

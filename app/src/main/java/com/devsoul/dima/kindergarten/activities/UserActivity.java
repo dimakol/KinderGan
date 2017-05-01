@@ -28,7 +28,6 @@ public class UserActivity extends Activity
 
     private SQLiteHandler db;
     private SessionManager session;
-    //private BitmapHandler bmpHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -48,9 +47,6 @@ public class UserActivity extends Activity
         // session manager
         session = new SessionManager(getApplicationContext());
 
-        // Bitmap handler
-        //bmpHandler = new BitmapHandler(getApplicationContext());
-
         // Check if user is already logged in or not
         if (!session.isLoggedIn())
         {
@@ -59,25 +55,34 @@ public class UserActivity extends Activity
 
         HashMap<String, String> user = null;
         String path = null;
-        // SQLite table of teachers contains records
-        if (db.getRowCount(db.TABLE_TEACHERS) > 0)
+
+        // Get the user type from session
+        switch (session.getType())
         {
-            // Fetching user details from SQLite teachers table
-            user = db.getTeacherDetails();
+            // Teacher type
+            case 1:
+            {
+                // Fetching user details from SQLite teachers table
+                user = db.getTeacherDetails();
+                path = user.get(db.KEY_PHOTO);
+                break;
+            }
+            // Parent type
+            case  2:
+            {
+                // Fetching user details from SQLite parents table
+                user = db.getParentDetails();
 
-            path = user.get(db.KEY_PHOTO);
-        }
-        // SQLite table of parents contains records
-        else if (db.getRowCount(db.TABLE_PARENTS) > 0)
-        {
-            // Fetching user details from SQLite parents table
-            user = db.getParentDetails();
-
-            // Fetching kid details from SQLite kids table
-            HashMap<String, String> kid;
-            kid = db.getKidDetails();
-
-            path = kid.get(db.KEY_PHOTO);
+                // Fetching kid details from SQLite kids table
+                HashMap<String, String> kid;
+                kid = db.getKidDetails();
+                path = kid.get(db.KEY_PHOTO);
+                break;
+            }
+            default:
+            {
+                return;
+            }
         }
 
         String name = user.get(db.KEY_FIRST_NAME) + " " + user.get(db.KEY_lAST_NAME);
@@ -100,27 +105,43 @@ public class UserActivity extends Activity
                 logoutUser();
             }
         });
-        btnEnter.setOnClickListener(new View.OnClickListener() {
+
+        btnEnter.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(UserActivity.this,TeacherActivity.class);
-                startActivity(intent);
+            public void onClick(View view)
+            {
+                // Teacher
+                if (session.getType() == 1)
+                {
+                    // Go to teacher activity
+                    Intent intent = new Intent(UserActivity.this,TeacherActivity.class);
+                    startActivity(intent);
+                }
+                // Parent
+                else if (session.getType() == 2)
+                {
+                    // Go to parent activity
+                    Intent intent = new Intent(UserActivity.this,ParentActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
 
     /**
      * Logging out the user.
-     * Will set isLoggedIn flag to false in shared preferences
+     * Will set isLoggedIn flag to false in shared preferences, type flag to 0
      * and clears the user data from SQLite users table
      */
     private void logoutUser()
     {
         session.setLogin(false);
-        db.deleteTeachers();
-        db.deleteParents();
-        db.deleteKids();
-        //db.deleteGans();
+        session.setType(0);
+        db.deleteTable(db.TABLE_TEACHERS);
+        db.deleteTable(db.TABLE_PARENTS);
+        db.deleteTable(db.TABLE_KIDS);
+        db.deleteTable(db.TABLE_GANS);
 
         // Launching the login activity
         Intent intent = new Intent(UserActivity.this, LoginActivity.class);

@@ -13,53 +13,49 @@
         android:background="@drawable/background"
         android:isScrollContainer="false"
         android:fitsSystemWindows="true"
-        tools:context=".activities.SignupKinderGanActivity">
+        tools:context=".activities.SignupTeacherGanActivity">
 
-    <!--  KinderGan Name Label -->
-    <android.support.design.widget.TextInputLayout
+    <!--  KinderGan City Spinner -->
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/android_material_design_spinner3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout">
-        <EditText
-                android:id="@+id/input_KinderGanName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:inputType="textCapWords"
-                android:hint="@string/hint_KGanName"/>
-    </android.support.design.widget.TextInputLayout>
+            android:hint="@string/hint_KGanCityDropdown"
+            android:textColorHint="@color/colorAccent"
+            app:met_baseColor="@color/white"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="@string/hint_KGanCity"
+            app:met_floatingLabelTextColor="@color/colorAccent"
+            app:met_primaryColor="@color/white"
+            app:met_textColorHint="@color/white" />
 
-    <!--  KinderGan Address Label -->
-    <android.support.design.widget.TextInputLayout
+    <!--  KinderGan Name Spinner -->
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/android_material_design_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout">
-        <EditText
-                android:id="@+id/input_KinderGanAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:inputType="textPostalAddress"
-                android:hint="@string/hint_KGanAddress"/>
-    </android.support.design.widget.TextInputLayout>
+            android:hint="@string/hint_KGanNameDropdown"
+            android:textColorHint="@color/colorAccent"
+            app:met_baseColor="@color/white"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="@string/hint_KGanName"
+            app:met_floatingLabelTextColor="@color/colorAccent"
+            app:met_primaryColor="@color/white"
+            app:met_textColorHint="@color/white" />
 
-    <!--  KinderGan Class Label -->
-    <android.support.design.widget.TextInputLayout
+    <!--  KinderGan Class Spinner -->
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/android_material_design_spinner2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout">
-        <EditText
-                android:id="@+id/input_KinderGanClass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:inputType="number"
-                android:maxLength="1"
-                android:hint="@string/hint_KGanClass"/>
-    </android.support.design.widget.TextInputLayout>
+            android:hint="@string/hint_KGanClassDropdown"
+            android:textColorHint="@color/colorAccent"
+            app:met_baseColor="@color/white"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="Class Number"
+            app:met_floatingLabelTextColor="@color/colorAccent"
+            app:met_primaryColor="@color/white"
+            app:met_textColorHint="@color/white" />
 
     <!-- Email Label -->
     <android.support.design.widget.TextInputLayout

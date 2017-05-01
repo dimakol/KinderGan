@@ -104,13 +104,28 @@
                 android:hint="@string/hint_email" />
     </android.support.design.widget.TextInputLayout>
 
+    <!-- Password Label -->
+    <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/white"
+            app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout">
+        <EditText
+                android:id="@+id/input_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:hint="@string/hint_password" />
+    </android.support.design.widget.TextInputLayout>
+
     <!-- Next Button -->
     <ImageButton
             android:id="@+id/img_btn_next"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginTop="89dp"
+            android:layout_marginTop="36dp"
             android:background="@null"
             android:contentDescription="@string/btn_next"
             android:src="@drawable/next" />
@@ -118,7 +133,7 @@
     <!-- login Link -->
     <TextView
             android:id="@+id/link_login"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/login_lnk"
