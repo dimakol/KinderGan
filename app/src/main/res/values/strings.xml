@@ -23,7 +23,6 @@
     <string name="btn_login">LOGIN</string>
     <string name="btn_register">REGISTER</string>
     <string name="btn_logout">LOGOUT</string>
-    <string name="name">Fullname</string>
     <string name="btn_parent">Parent</string>
     <string name="btn_nanny">Nanny</string>
     <string name="btn_next">Next</string>
@@ -31,6 +30,12 @@
     <string name="SignUp_lnk">Don\'t have an account?<b>Sign Up</b></string>
     <string name="login_lnk">Already a member? Login</string>
     <string name="btn_contact">Contact the teacher</string>
+    <string name="kid_menu">Kid Menu</string>
+    <string name="teacher_menu">Teacher Menu</string>
+    <string name="favorite">Favorite</string>
+    <string name="message">Message</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
     <string name="title_activity_xml">FabOptions: XML</string>
     <string name="title_activity_java">FabOptions: Java</string>
     <string name="website">joaquimley.com</string>

@@ -5,22 +5,22 @@
     <item
         android:id="@+id/faboptions_favorite"
         android:icon="@drawable/ic_favorite"
-        android:title="Favorite" />
+        android:title="@string/favorite" />
 
     <item
         android:id="@+id/faboptions_textsms"
         android:icon="@drawable/ic_textsms"
-        android:title="Message" />
+        android:title="@string/message" />
 
     <item
         android:id="@+id/faboptions_download"
         android:icon="@drawable/ic_file_download"
-        android:title="Download" />
+        android:title="@string/download" />
 
 
     <item
         android:id="@+id/faboptions_share"
         android:icon="@drawable/mail"
-        android:title="Share" />
+        android:title="@string/share" />
 
 </menu>
