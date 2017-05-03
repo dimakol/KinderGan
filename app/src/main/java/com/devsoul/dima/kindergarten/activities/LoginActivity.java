@@ -303,6 +303,34 @@ public class LoginActivity extends Activity
                             // Create type session
                             session.setType(2);
                         }
+                        else if (jType == 2)
+                        // Parent
+                        {
+                            Parent parent = new Parent();
+                            Kid child = new Kid();
+                            KinderGan Gan = new KinderGan();
+
+                            parent.SetID(user.getString("ID"));
+                            parent.SetFirstName(user.getString("firstname"));
+                            parent.SetLastName(user.getString("lastname"));
+                            parent.SetAddress(user.getString("address"));
+                            parent.SetPhone(user.getString("phone"));
+                            parent.SetEmail(user.getString("email"));
+                            parent.SetCreatedAt(user.getString("created_at"));
+
+                            // Inserting row in parents table
+                            db.addParent(parent);
+
+                            child.SetName(user.getString("kid_name"));
+                            child.SetBirthDate(user.getString("kid_birthdate"));
+                            child.SetPicture(user.getString("kid_photo"));
+                            child.SetClass(user.getString("kid_class"));
+                            Gan.SetName(user.getString("kindergan_name"));
+                            child.SetCreatedAt(user.getString("created_at"));
+
+                            // Inserting row in kids table
+                            db.addKid(child, Gan);
+                        }
 
                         // Create login session
                         session.setLogin(true);

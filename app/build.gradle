@@ -5,6 +5,7 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "com.devsoul.dima.kindergarten"
         minSdkVersion 15
         targetSdkVersion 24
@@ -32,6 +33,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:6.1.0' // Design library
     compile 'com.squareup.picasso:picasso:2.5.2' // Picasso library
     //compile 'com.android.volley:volley:login_bg.0.0'   // Network library
-    compile files('libs/volley.jar')            // Network library
-
+    compile files('libs/volley.jar')
+    // Network library
 }
