@@ -32,16 +32,11 @@
     <string name="btn_contact">Contact the teacher</string>
     <string name="kid_menu">Kid Menu</string>
     <string name="teacher_menu">Teacher Menu</string>
-    <string name="favorite">Favorite</string>
-    <string name="message">Message</string>
+    <string name="notification">Notification</string>
+    <string name="camera">Camera</string>
     <string name="download">Download</string>
     <string name="share">Share</string>
-    <string name="title_activity_xml">FabOptions: XML</string>
-    <string name="title_activity_java">FabOptions: Java</string>
-    <string name="website">joaquimley.com</string>
-    <string name="change_activity">Change Activity</string>
-    <string name="action_snackbar_test_message">FabOptions should react to me</string>
-    <string name="action_snackbar_test">Snackbar test</string>
+    <string name="time_picker_title">Select Time</string>
     <string name="faboptions_vector_overflow_path">M 6 12 L 6 12.1, M 12 12.1 L 12 12, M 18 12.1 L 18 12</string>
     <string name="faboptions_vector_close_path">M 6 6 L 18 18, M 12 12 L 12 12, M 6 18 L 18 6</string>
 </resources>

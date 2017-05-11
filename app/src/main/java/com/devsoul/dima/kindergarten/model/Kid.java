@@ -14,6 +14,11 @@ public class Kid implements Serializable
     private String Picture;
     private String Class;
     private String Parent_ID;
+    private String Presence;
+    private String Special;
+    private String Contact1;
+    private String Contact2;
+    private String Contact3;
     private String Created_at;
 
     // Constructor
@@ -89,6 +94,56 @@ public class Kid implements Serializable
     public String GetParentID()
     {
         return this.Parent_ID;
+    }
+
+    // Presence
+    public void SetPresence(String Presence)
+    {
+        this.Presence = Presence;
+    }
+    public String GetPresence()
+    {
+        return this.Presence;
+    }
+
+    // Special
+    public void SetSpecial(String Special)
+    {
+        this.Special = Special;
+    }
+    public String GetSpecial()
+    {
+        return this.Special;
+    }
+
+    // Contact1
+    public void SetContact1(String Contact1)
+    {
+        this.Contact1 = Contact1;
+    }
+    public String GetContact1()
+    {
+        return this.Contact1;
+    }
+
+    // Contact2
+    public void SetContact2(String Contact2)
+    {
+        this.Contact2 = Contact2;
+    }
+    public String GetContact2()
+    {
+        return this.Contact2;
+    }
+
+    // Contact3
+    public void SetContact3(String Contact3)
+    {
+        this.Contact3 = Contact3;
+    }
+    public String GetContact3()
+    {
+        return this.Contact3;
     }
 
     // Created_at

@@ -3,14 +3,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/faboptions_favorite"
-        android:icon="@drawable/ic_favorite"
-        android:title="@string/favorite" />
+        android:id="@+id/faboptions_notification"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/notification" />
 
     <item
-        android:id="@+id/faboptions_textsms"
-        android:icon="@drawable/ic_textsms"
-        android:title="@string/message" />
+        android:id="@+id/faboptions_camera"
+        android:icon="@drawable/ic_camera"
+        android:title="@string/camera" />
 
     <item
         android:id="@+id/faboptions_download"

@@ -14,93 +14,47 @@
         android:fitsSystemWindows="true"
         tools:context=".activities.TeacherActivity">
 
-    <!--  KinderGan Name -->
-    <TextView
-            android:id="@+id/ganName"
+    <LinearLayout android:id="@+id/linearLayout1"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+        <!--  KinderGan Name -->
+        <TextView
+                android:id="@+id/ganName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/hint_KGanName"
+                android:textColor="@color/color1"
+                android:textSize="20sp"/>
+
+        <!--  KinderGan Class -->
+        <TextView
+                android:id="@+id/clsNum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/hint_KGanClass"
+                android:textColor="@color/color1"
+                android:textSize="20sp"/>
+
+    </LinearLayout>
+
+    <!-- Kid's Profiles -->
+    <GridView
+            android:id="@+id/gridView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/linearLayout1"
+            android:layout_margin="5dp"
+            android:columnWidth="90dp"
             android:gravity="center"
-            android:text="@string/hint_KGanName"
-            android:textSize="20sp"/>
-
-    <!--  KinderGan Class -->
-    <TextView
-            android:id="@+id/clsNum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/hint_KGanClass"
-            android:textSize="20sp"
-            android:layout_below="@+id/ganName"/>
-
-    <!--  Kid1 Profile -->
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/baby1"
-            android:layout_width="169dp"
-            android:layout_height="159dp"
-            android:src="@drawable/baby"
-            app:civ_border_color="@color/color2"
-            app:civ_border_width="3dp"
-            android:layout_below="@id/clsNum"
-            android:layout_marginTop="10dp"/>
-
-    <!--  Kid2 Profile -->
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/baby2"
-            android:layout_width="169dp"
-            android:layout_height="159dp"
-            android:src="@drawable/baby"
-            app:civ_border_color="@color/color2"
-            app:civ_border_width="3dp"
-            android:layout_below="@id/clsNum"
-            android:layout_toRightOf="@+id/baby1"
-            android:layout_marginTop="10dp"/>
-
-    <!--  Kid3 Profile -->
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/baby3"
-            android:layout_width="169dp"
-            android:layout_height="159dp"
-            android:src="@drawable/baby"
-            app:civ_border_color="@color/color2"
-            app:civ_border_width="3dp"
-            android:layout_below="@id/baby1"
-            android:layout_marginTop="10dp"/>
-
-    <!--  Kid4 Profile -->
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/baby4"
-            android:layout_width="169dp"
-            android:layout_height="159dp"
-            android:src="@drawable/baby"
-            app:civ_border_color="@color/color2"
-            app:civ_border_width="3dp"
-            android:layout_below="@id/baby2"
-            android:layout_toRightOf="@+id/baby3"
-            android:layout_marginTop="10dp"/>
-
-    <!--  Kid5 Profile -->
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/baby5"
-            android:layout_width="169dp"
-            android:layout_height="159dp"
-            android:src="@drawable/baby"
-            app:civ_border_color="@color/color2"
-            app:civ_border_width="3dp"
-            android:layout_below="@id/baby3"
-            android:layout_marginTop="10dp"/>
-
-    <!--  Kid6 Profile -->
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/baby6"
-            android:layout_width="169dp"
-            android:layout_height="159dp"
-            android:src="@drawable/baby"
-            app:civ_border_color="@color/color2"
-            app:civ_border_width="3dp"
-            android:layout_below="@id/baby4"
-            android:layout_toRightOf="@+id/baby5"
-            android:layout_marginTop="10dp"/>
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp">
+    </GridView>
 
     <!--  Kid Menu -->
     <ImageView
@@ -203,5 +157,4 @@
                 app:background_color="@color/color1"
                 app:fab_color="@color/color2" />
     </android.support.design.widget.CoordinatorLayout>
-
 </RelativeLayout>
