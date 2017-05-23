@@ -1,6 +1,7 @@
 package com.devsoul.dima.kindergarten.activities;
 
-import android.app.*;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -18,7 +19,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.devsoul.dima.kindergarten.R;
 import com.devsoul.dima.kindergarten.app.AppConfig;
 import com.devsoul.dima.kindergarten.app.AppController;
-import com.devsoul.dima.kindergarten.helper.NotificationMessage;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
 import com.devsoul.dima.kindergarten.model.Kid;
@@ -28,7 +28,6 @@ import com.devsoul.dima.kindergarten.model.Teacher;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,9 +74,6 @@ public class LoginActivity extends Activity
 
         // Session manager
         session = new SessionManager(getApplicationContext());
-
-        // Push up notification
-        notifyAtTime();
 
         // Check if user is already logged in or not
         if (session.isLoggedIn())
@@ -267,6 +263,7 @@ public class LoginActivity extends Activity
                             Gan.SetCity(user.getString("kindergan_city"));
                             Nanny.SetClass(user.getString("kindergan_class"));
                             Nanny.SetEmail(user.getString("email"));
+                            Nanny.SetNotificationTime(user.getString("notification_time"));
                             Nanny.SetCreatedAt(user.getString("created_at"));
 
                             // Inserting row in teachers table
@@ -381,23 +378,5 @@ public class LoginActivity extends Activity
     {
         if (pDialog.isShowing())
             pDialog.dismiss();
-    }
-
-    /** Notify the user when they have a task at 10 AM every day */
-    public void notifyAtTime()
-    {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 40);
-        calendar.set(Calendar.SECOND, 00);
-        //calendar.set(Calendar.AM_PM,Calendar.PM);
-
-        Intent notification_message = new Intent(LoginActivity.this , NotificationMessage.class);
-
-        // This is alarm manager
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, notification_message, PendingIntent.FLAG_UPDATE_CURRENT);
-        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000  , pendingIntent);
     }
 }

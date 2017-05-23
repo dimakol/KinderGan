@@ -21,12 +21,30 @@
     </item>
     <item
         is-multidex="false"
+        jar="C:\Users\Dima\.android\build-cache\1fad11bb4a26767a6defa5c13b5988e7e658eb5f\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="f6e58c7d603352781e3ab0ed958633718c085f90">
+        <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\classes_925921913abc991f4a11360e09eefe1671765dbd.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="C:\Users\Dima\.android\build-cache\0900a6f438138f8689b0a861ed3382799fc6c8f1\output\jars\classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.3"
         sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
         <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\classes_a5a29ab2b3ae4e0318bfc0bcb375d7eb4db2f8c6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Dima\.android\build-cache\c7df91c3b117704611645dc71ff2b3e6ebdcc182\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="c61a0369f93fb7901fde1bdae68fc71de256244c">
+        <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\classes_1bb2708be226833f9e11b42b2208cb95eb5433fd.jar" />
     </item>
     <item
         is-multidex="false"
@@ -45,15 +63,6 @@
         revision="25.0.3"
         sha1="63735f48b82bcd24cdd33821342428252eb1ca5a">
         <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\butterknife-6.1.0_b70b4a7a1ffb5b813258305d49ae04a240355bef.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="D:\android-sdk\extras\android\m2repository\com\android\support\support-annotations\24.2.1\support-annotations-24.2.1.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.3"
-        sha1="8de3aafecbdf98a61db6427f008f2d515bcd2544">
-        <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\support-annotations-24.2.1_56f9c0d435e1b5de6382cbff958ca352d4f945c3.jar" />
     </item>
     <item
         is-multidex="false"
@@ -198,6 +207,15 @@
         revision="25.0.3"
         sha1="94bc1dfb84dcc8b6f6f8f7cc726d7b2dd39c1574">
         <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\classes_436ca0b05246aab116b0da776c5b06e681f2faf3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\android-sdk\extras\android\m2repository\com\android\support\support-annotations\25.0.0\support-annotations-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="C:\Users\Dima\IdeaProjects\KinderGan\app\build\intermediates\pre-dexed\debug\support-annotations-25.0.0_b699ac2530615a6972ea66555edb9dee8a02ff9a.jar" />
     </item>
     <item
         is-multidex="false"

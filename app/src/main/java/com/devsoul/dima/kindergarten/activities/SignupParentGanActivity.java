@@ -658,6 +658,7 @@ public class SignupParentGanActivity extends Activity
                         Gan.SetName(user.getString("kindergan_name"));
                         child.SetParentID(user.getString("ID"));
                         child.SetCreatedAt(user.getString("created_at"));
+                        child.SetPresence(user.getString("presence"));
 
                         // Inserting row in kids table
                         db.addKid(child, Gan);

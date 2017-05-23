@@ -32,5 +32,6 @@ dependencies {
     compile 'com.android.support:design:24.2.1' // Design library
     compile 'com.jakewharton:butterknife:6.1.0' // Design library
     compile 'com.squareup.picasso:picasso:2.5.2' // Picasso library
+    compile 'com.evernote:android-job:1.1.8'     // Android-Job for notifications
     compile files('libs/volley.jar')// Network library
 }

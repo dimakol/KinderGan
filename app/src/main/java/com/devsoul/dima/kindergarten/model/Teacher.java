@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * This is the teacher class
- * @params ID, First Name, Last Name, Phone, Picture, Class, Email, Password, Created at
+ * @params ID, First Name, Last Name, Phone, Picture, Class, Email, Password, Notification Time, Created at
  */
 public class Teacher implements Serializable
 {
@@ -17,6 +17,7 @@ public class Teacher implements Serializable
     private String Class;
     private String Email;
     private String Password;
+    private String Notification_Time;
     private String Created_at;
 
     // Default Constructor
@@ -101,6 +102,16 @@ public class Teacher implements Serializable
     public String GetPassword()
     {
         return this.Password;
+    }
+
+    // Notification Time
+    public void SetNotificationTime(String Notification_Time)
+    {
+        this.Notification_Time = Notification_Time;
+    }
+    public String GetNotificationTime()
+    {
+        return this.Notification_Time;
     }
 
     // Created_at

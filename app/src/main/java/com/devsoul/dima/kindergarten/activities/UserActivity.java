@@ -1,7 +1,9 @@
 package com.devsoul.dima.kindergarten.activities;
 
 import android.Manifest;
-import android.app.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +24,7 @@ import com.devsoul.dima.kindergarten.app.AppConfig;
 import com.devsoul.dima.kindergarten.app.AppController;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
+import com.devsoul.dima.kindergarten.helper.jobs.ShowNotificationJob;
 import com.devsoul.dima.kindergarten.model.Kid;
 import com.devsoul.dima.kindergarten.model.KinderGan;
 import com.devsoul.dima.kindergarten.model.Parent;
@@ -122,7 +125,7 @@ public class UserActivity extends Activity
                 break;
             }
             // Parent type
-            case  2:
+            case 2:
             {
                 // Fetching user details from SQLite parents table
                 user = db.getParentDetails();
@@ -471,14 +474,18 @@ public class UserActivity extends Activity
                             Gan.SetName(teacher.getString("kindergan_name"));
                             Nanny.SetClass(teacher.getString("kindergan_class"));
                             Nanny.SetEmail(teacher.getString("email"));
+                            Nanny.SetNotificationTime(teacher.getString("notification_time"));
 
                             // Inserting row in teachers table
                             db.addTeacher(Nanny, Gan);
                         }
+
+                        // The push up notification if kid isn't arrived to kindergarten
+                        Notification();
                     }
                     else
                     {
-                        // Error occurred in registration. Get the error message
+                        // Error occurred in loading. Get the error message
                         String errorMsg = jObj.getString("error_msg");
                         onLoadFailed(errorMsg);
                     }
@@ -867,4 +874,25 @@ public class UserActivity extends Activity
         }
     }
 
+    /*
+    Performs the entire alert process
+     */
+    public void Notification()
+    {
+        // Kid doesn't presence in kindergarten
+        if (Integer.parseInt(kid.get(db.KEY_PRESENCE)) == 0)
+        {
+            // get notification time from teacher
+            String notification_time = db.getNotificationTime();
+            if (notification_time != null)
+            {
+                // Split time to hours and minutes
+                String[] parts = notification_time.split(":");
+                int hours = Integer.parseInt(parts[0]);
+                int minutes = Integer.parseInt(parts[1]);
+                // Set notification alarm
+                ShowNotificationJob.scheduleExact(hours, minutes);
+            }
+        }
+    }
 }

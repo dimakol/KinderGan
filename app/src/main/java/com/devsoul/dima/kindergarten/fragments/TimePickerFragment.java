@@ -10,11 +10,12 @@ import android.widget.TimePicker;
 import com.devsoul.dima.kindergarten.R;
 
 /**
- * Created by Dima on 5/10/2017.
+ * This fragment is the time picker dialog
  */
 public class TimePickerFragment extends DialogFragment
 {
     private TimePicker timePicker;
+
     public interface TimeDialogListener
     {
         void onFinishDialog(String time);
@@ -55,16 +56,18 @@ public class TimePickerFragment extends DialogFragment
                                     minute = timePicker.getCurrentMinute();
                                 }
                                 TimeDialogListener activity = (TimeDialogListener) getActivity();
-                                activity.onFinishDialog(updateTime(hour,minute));
+                                activity.onFinishDialog(getSelectedTime(hour,minute));
                                 dismiss();
                             }
                         })
                 .create();
     }
 
+    /**
     private String updateTime(int hours, int mins)
     {
         String timeSet = "";
+
         if (hours > 12)
         {
             hours -= 12;
@@ -86,10 +89,18 @@ public class TimePickerFragment extends DialogFragment
         else
             minutes = String.valueOf(mins);
 
+
         String myTime = new StringBuilder().append(hours).append(':')
                 .append(minutes).append(" ").append(timeSet).toString();
 
         return myTime;
     }
+    **/
 
+    private String getSelectedTime(int hours, int minutes)
+    {
+        String myTime = new StringBuilder().append(hours).append(':')
+                .append(minutes).append(":00").toString();
+        return myTime;
+    }
 }

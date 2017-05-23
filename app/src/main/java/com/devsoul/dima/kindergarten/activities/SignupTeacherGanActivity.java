@@ -446,6 +446,7 @@ public class SignupTeacherGanActivity extends Activity
                         Gan.SetCity(user.getString("kindergan_city"));
                         Nanny.SetClass(user.getString("kindergan_class"));
                         Nanny.SetEmail(user.getString("email"));
+                        Nanny.SetNotificationTime(user.getString("notification_time"));
                         Nanny.SetCreatedAt(user.getString("created_at"));
 
                         // Inserting row in teachers table

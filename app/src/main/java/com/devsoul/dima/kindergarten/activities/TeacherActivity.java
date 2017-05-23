@@ -1,11 +1,15 @@
 package com.devsoul.dima.kindergarten.activities;
 
 import android.Manifest;
-import android.app.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,15 +26,19 @@ import com.devsoul.dima.kindergarten.app.AppConfig;
 import com.devsoul.dima.kindergarten.app.AppController;
 import com.devsoul.dima.kindergarten.fabbo.FabOptions;
 import com.devsoul.dima.kindergarten.fragments.TimePickerFragment;
+import com.devsoul.dima.kindergarten.helper.CSVWriter;
 import com.devsoul.dima.kindergarten.helper.GridViewAdapter;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
+import com.devsoul.dima.kindergarten.model.Attendance;
 import de.hdodenhof.circleimageview.CircleImageView;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Teacher Main Activity screen
@@ -40,12 +48,20 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
     private static final String TAG = TeacherActivity.class.getSimpleName();
     private static final String DIALOG_TIME = "TeacherActivity.TimeDialog";
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSION_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE,
+                                                  Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final String FILE_DIRECTORY = "KinderGan";   // File directory of csv and photo file
+    private static final String CSV_NAME = "attendance.csv";    // csv file name
+
     private TextView txtGan;
     private TextView txtCls;
     private FabOptions mFabOptions;
 
     private SQLiteHandler db;
     private ProgressDialog pDialog;
+
+    private Attendance attendance;
 
     private HashMap<String, String> teacher;
     private HashMap<String, String> kid;
@@ -60,12 +76,16 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
     private GridView gridView;
 
     private String phone_number;
+    private File imageFile;
+    private int day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
+
+        verifyStoragePermissions(this);
 
         txtGan = (TextView) findViewById(R.id.ganName);
         txtCls = (TextView) findViewById(R.id.clsNum);
@@ -79,6 +99,8 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
         final ImageView BtnDetails = (ImageView) findViewById(R.id.BtnDetails);
         final ImageView missBtn = (ImageView) findViewById(R.id.missBtn);
         final ImageView arrvBtn = (ImageView) findViewById(R.id.arrvBtn);
+
+        attendance = new Attendance();
 
         //Initializing the ArrayLists
         KIDPICS_LIST = new ArrayList<String>();
@@ -276,22 +298,33 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
             {
                 switch (view.getId()) {
                     case R.id.faboptions_notification:
-                        //createNotification();
                         TimePickerFragment dialog = new TimePickerFragment();
                         dialog.show(getSupportFragmentManager(), DIALOG_TIME);
                         break;
                     case R.id.faboptions_camera:
-                        Toast.makeText(TeacherActivity.this, "Camera", Toast.LENGTH_SHORT).show();
+                        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                        File newFile = new File(file, FILE_DIRECTORY);
+                        if (!newFile.exists())
+                            newFile.mkdirs();
+                        Camera();
                         break;
                     case R.id.faboptions_download:
-                        Toast.makeText(TeacherActivity.this, "Download", Toast.LENGTH_SHORT).show();
+                        // Get today date day from calendar
+                        Calendar calendar = Calendar.getInstance();
+                        day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                        // Delete table of attendance from SQLite
+                        if (db.getRowCount(SQLiteHandler.TABLE_ATTENDANCE) > 0)
+                            db.deleteTable(SQLiteHandler.TABLE_ATTENDANCE);
+
+                        GetAttendance(KinderGan_Name, KinderGan_Class);
+                        openCSVFile(CSV_NAME);
                         break;
                     case R.id.faboptions_share:
                         ArrayList<String> emails = db.getEmails();
                         String[] emailsArray = new String[emails.size()];
                         emailsArray = emails.toArray(emailsArray);
                         sendEmail(emailsArray);
-                        //Toast.makeText(TeacherActivity.this, "Mail Sent", Toast.LENGTH_SHORT).show();
                         break;
                     default:
                 }
@@ -381,6 +414,50 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
     }
 
     /**
+     * Open the camera and save picture in media store if required
+     */
+    protected void Camera()
+    {
+        Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + ".jpg";
+        imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+ "/" + FILE_DIRECTORY, imageFileName);
+        Uri tempuri = Uri.fromFile(imageFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,tempuri);
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY,1);
+        startActivityForResult(intent,0);
+    }
+
+    /**
+     * Save the file captured by camera in internal storage
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode==0)
+        {
+            switch (resultCode)
+            {
+                case Activity.RESULT_OK:
+                    if (imageFile.exists())
+                    {
+                        Toast.makeText(this,"The file was saved at"+imageFile.getAbsolutePath(),Toast.LENGTH_LONG).show();
+                    }
+                    else
+                        Toast.makeText(this,"There was an error",Toast.LENGTH_LONG).show();
+                    break;
+                case Activity.RESULT_CANCELED:
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
      * Function to update kid presence in MySQL,
      * will post all params to login url
      * @param ParentID
@@ -455,6 +532,82 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
     }
 
     /**
+     * Function to update teacher notification time in MySQL,
+     * will post all params to login url
+     * @param TeacherKinderGanName
+     * @param TeacherKinderGanClass
+     * @param TeacherTime - Notification time
+     */
+    private void UpdateNotificationTime(final String TeacherKinderGanName, final String TeacherKinderGanClass, final String TeacherTime)
+    {
+        // Tag used to cancel the request
+        String tag_string_req = "notification_request";
+
+        pDialog.setMessage("Updating notification time ...");
+        showDialog();
+
+        // Making the volley http request
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.LOGIN_URL, new Response.Listener<String>()
+        {
+            @Override
+            public void onResponse(String response)
+            {
+                Log.d(TAG, "teacher notification time Response: " + response.toString());
+                hideDialog();
+
+                try
+                {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (error)
+                    {
+                        // Error occurred in update. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        onLoadFailed(errorMsg);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e(TAG, "Load Error: " + error.getMessage());
+                onLoadFailed(error.getMessage());
+                hideDialog();
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "update_notification");
+                params.put("KinderGan_Name", TeacherKinderGanName);
+                params.put("KinderGan_Class", TeacherKinderGanClass);
+                params.put("Notification_Time", TeacherTime);
+                return params;
+            }
+        };
+
+        //Set a retry policy in case of SocketTimeout & ConnectionTimeout Exceptions.
+        //Volley does retry for you if you have specified the policy.
+        strReq.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    /**
      * This function shows a message to the user that the load has failed.
      */
     public void onLoadFailed(String message)
@@ -480,30 +633,202 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
             pDialog.dismiss();
     }
 
+    /**
+     * onFinishDialog of alarm time picker
+     * @param time - the time that was chosen by the teacher for the notification
+     */
     @Override
     public void onFinishDialog(String time)
     {
-        Toast.makeText(this, "Selected Time : "+ time, Toast.LENGTH_SHORT).show();
+        Log.i("Selected Time: "+ time, "");
+
+        // Update teacher notification time
+        teacher.put(db.KEY_NOTIFICATION_TIME, time);
+        // Update in SQLite notification time column in teacher table
+        db.UpdateTeacherNotificationTime(time);
+        // Update column in MySQL
+        UpdateNotificationTime(teacher.get(db.KEY_KINDERGAN_NAME), teacher.get(db.KEY_KINDERGAN_CLASS), time);
+        Toast.makeText(TeacherActivity.this, "Notification alarm were updated successfully: " + time, Toast.LENGTH_SHORT).show();
     }
 
-    public void createNotification()
+    /**
+     * Function to get attendance from MySQL to SQLite,
+     * will post all params to login url
+     * @param KinderGan_Name
+     * @param KinderGan_Class
+     */
+    private void GetAttendance(final String KinderGan_Name, final String KinderGan_Class)
     {
-        // Prepare intent which is triggered if the notification is selected
-        Intent intent = new Intent(this, MissingActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+        // Tag used to cancel the request
+        String tag_string_req = "attendance_request";
 
-        // Build notification
-        // Actions are just fake
-        Notification noti = new Notification.Builder(this)
-                .setContentTitle("Missing child")
-                .setContentText("Your child is absent today from kindergarten")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pIntent).build();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // hide the notification after its selected
-        noti.flags |= Notification.FLAG_AUTO_CANCEL;
+        pDialog.setMessage("Loading kids attendance ...");
+        showDialog();
 
-        notificationManager.notify(0, noti);
+        // Making the volley http request
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.LOGIN_URL, new Response.Listener<String>()
+        {
+            @Override
+            public void onResponse(String response)
+            {
+                Log.d(TAG, "kids attendance Response: " + response.toString());
+                hideDialog();
+
+                try
+                {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error)
+                    {
+                        // Kids attendance successfully loaded from MySQL
+                        // Now store the attendance in SQLite
+                        JSONArray attendanceArr = jObj.getJSONArray("attendance");
+                        for (int i = 0; i < attendanceArr.length(); i++)
+                        {
+                            JSONObject record = attendanceArr.getJSONObject(i);
+                            attendance.SetUID(record.getString("uid"));
+                            attendance.SetParentID(record.getString("parent_id"));
+                            attendance.SetName(record.getString("name"));
+                            attendance.SetFirst(record.getString("1st"));
+                            attendance.SetSecond(record.getString("2nd"));
+                            attendance.SetThird(record.getString("3rd"));
+                            attendance.SetFourth(record.getString("4th"));
+                            attendance.SetFifth(record.getString("5th"));
+                            attendance.SetSixth(record.getString("6th"));
+                            attendance.SetSeventh(record.getString("7th"));
+                            attendance.SetEighth(record.getString("8th"));
+                            attendance.SetNinth(record.getString("9th"));
+                            attendance.SetTenth(record.getString("10th"));
+                            attendance.SetEleventh(record.getString("11th"));
+                            attendance.SetTwelfth(record.getString("12th"));
+                            attendance.SetThirteenth(record.getString("13th"));
+                            attendance.SetFourteenth(record.getString("14th"));
+                            attendance.SetFifteenth(record.getString("15th"));
+                            attendance.SetSixteenth(record.getString("16th"));
+                            attendance.SetSeventeenth(record.getString("17th"));
+                            attendance.SetEighteenth(record.getString("18th"));
+                            attendance.SetNineteenth(record.getString("19th"));
+                            attendance.SetTwentieth(record.getString("20th"));
+                            attendance.SetTwentiethFirst(record.getString("21st"));
+                            attendance.SetTwentiethSecond(record.getString("22nd"));
+                            attendance.SetTwentiethThird(record.getString("23rd"));
+                            attendance.SetTwentiethFourth(record.getString("24th"));
+                            attendance.SetTwentiethFifth(record.getString("25th"));
+                            attendance.SetTwentiethSixth(record.getString("26th"));
+                            attendance.SetTwentiethSeventh(record.getString("27th"));
+                            attendance.SetTwentiethEighth(record.getString("28th"));
+                            attendance.SetTwentiethNinth(record.getString("29th"));
+                            attendance.SetThirtieth(record.getString("30th"));
+                            attendance.SetThirtiethFirst(record.getString("31st"));
+
+                            // Inserting row in attendance table
+                            db.addAttendance(attendance);
+                        }
+
+                        exportDB(CSV_NAME);
+                    }
+                    else
+                    {
+                        // Error occurred in loading. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        onLoadFailed(errorMsg);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e(TAG, "Load Error: " + error.getMessage());
+                onLoadFailed(error.getMessage());
+                hideDialog();
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "get_attendance");
+                params.put("KinderGan_Name", KinderGan_Name);
+                params.put("KinderGan_Class", KinderGan_Class);
+                return params;
+            }
+        };
+
+        //Set a retry policy in case of SocketTimeout & ConnectionTimeout Exceptions.
+        //Volley does retry for you if you have specified the policy.
+        strReq.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Export SQLite table to csv file
+     */
+    private void exportDB(String fileName)
+    {
+        File exportDir = new File(Environment.getExternalStorageDirectory(), FILE_DIRECTORY);
+        if (!exportDir.exists())
+        {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, fileName);
+        try
+        {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            db.getAttendanceDetails(csvWrite, day);
+            csvWrite.close();
+        }
+        catch (Exception sqlEx)
+        {
+            Log.e(TAG, sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    /*
+    Open the csv file
+     */
+    private void openCSVFile(String fileName)
+    {
+        File file = new File(Environment.getExternalStorageDirectory(), FILE_DIRECTORY + "/" + fileName);
+        Intent csvIntent = new Intent(Intent.ACTION_VIEW);
+        Uri path = Uri.fromFile(file);
+        csvIntent.setDataAndType(path, "text/csv");
+        //csvIntent.setDataAndType(FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", finalFile), "text/csv");
+        csvIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        csvIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(csvIntent);
+    }
+
+    /*
+    Verify external read and write permissions and grant them on runtime
+     */
+    public static void verifyStoragePermissions(Activity activity)
+    {
+        // Check if we have read or write permission
+        int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int readPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (writePermission != PackageManager.PERMISSION_GRANTED || readPermission != PackageManager.PERMISSION_GRANTED)
+        {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity,
+                                              PERMISSION_STORAGE,
+                                              REQUEST_EXTERNAL_STORAGE);
+        }
+    }
 }
