@@ -84,9 +84,10 @@
                 android:id="@+id/btnSpecial"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="17dp"
+                android:layout_marginLeft="15dp"
                 android:background="@null"
                 android:contentDescription="@string/btn_logout"
+                android:padding="1dp"
                 android:src="@drawable/special"
                 android:visibility="gone" />
         <!--  Pick Button -->
@@ -94,22 +95,45 @@
                 android:id="@+id/btnPick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
+                android:layout_marginLeft="26dp"
                 android:background="@null"
                 android:contentDescription="@string/btn_logout"
+                android:padding="1dp"
                 android:src="@drawable/pick2"
                 android:visibility="gone" />
     </LinearLayout>
+
+    <!--  Schedule Button -->
+    <ImageButton
+            android:id="@+id/btnSchlp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:background="@null"
+            android:src="@drawable/sc"
+            android:contentDescription="@string/schedule"
+            android:visibility="gone"
+            android:padding="1dp"/>
+
+    <ImageButton
+            android:id="@+id/btnSchlt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:background="@null"
+            android:src="@drawable/sc"
+            android:contentDescription="@string/schedule"
+            android:visibility="visible"
+            android:padding="1dp"/>
 
     <!--  Logout Button -->
     <ImageButton
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="52dp"
             android:background="@null"
             android:contentDescription="@string/btn_logout"
-            android:padding="10dp"
+            android:padding="1dp"
             android:src="@drawable/logout"
             android:visibility="visible"
             android:layout_gravity="center"/>

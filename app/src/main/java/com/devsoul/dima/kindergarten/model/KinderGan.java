@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * This is the KinderGan class
- * @params ID, Name, Address, Classes, City, Phone
+ * @params ID, Name, Address, Classes, City, Phone, Schedule
  */
 public class KinderGan implements Serializable
 {
@@ -15,6 +15,7 @@ public class KinderGan implements Serializable
     private int Classes;
     private String City;
     private String Phone;
+    private String Schedule_Path;
 
     // Constructor
     public KinderGan() {}
@@ -89,5 +90,15 @@ public class KinderGan implements Serializable
     public String GetPhone()
     {
         return this.Phone;
+    }
+
+    // Schedule
+    public void SetSchedule(String Schedule)
+    {
+        this.Schedule_Path = Schedule;
+    }
+    public String GetSchedule()
+    {
+        return this.Schedule_Path;
     }
 }

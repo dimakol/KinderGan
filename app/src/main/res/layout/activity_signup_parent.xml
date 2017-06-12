@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:inputType="number"
+                android:maxLength="10"
                 android:hint="@string/hint_ID"/>
     </android.support.design.widget.TextInputLayout>
 

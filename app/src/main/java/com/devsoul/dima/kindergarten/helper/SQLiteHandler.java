@@ -24,7 +24,7 @@ public class SQLiteHandler extends SQLiteOpenHelper
     private static final String TAG = SQLiteHandler.class.getSimpleName();
 
     // Database Version
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     // Database Name
     public static final String DATABASE_NAME = "login_db";
@@ -57,6 +57,7 @@ public class SQLiteHandler extends SQLiteOpenHelper
     public static final String KEY_CITY = "city";
     public static final String KEY_PARENT_ID = "parent_id";
     public static final String KEY_NOTIFICATION_TIME = "notification_time";
+    public static final String KEY_SCHEDULE = "schedule_plan";
 
     // Columns names addons to kids
     public static final String KEY_PRESENCE = "presence";
@@ -125,7 +126,7 @@ public class SQLiteHandler extends SQLiteOpenHelper
     private static final String CREATE_TABLE_GANS = "CREATE TABLE " + TABLE_GANS + "("
             + KEY_UID + " TEXT UNIQUE," + KEY_NAME + " TEXT,"
             + KEY_CLASSES + " INTEGER," + KEY_ADDRESS + " TEXT,"
-            + KEY_CITY + " TEXT," + KEY_PHONE + " TEXT" + ")";
+            + KEY_CITY + " TEXT," + KEY_PHONE + " TEXT," + KEY_SCHEDULE + " TEXT" + ")";
 
     // Attendance table create statement
     private static final String CREATE_TABLE_ATTENDANCE = "CREATE TABLE " + TABLE_ATTENDANCE + "("
@@ -268,6 +269,7 @@ public class SQLiteHandler extends SQLiteOpenHelper
         values.put(KEY_ADDRESS, gan.GetAddress());
         values.put(KEY_CITY, gan.GetCity());
         values.put(KEY_PHONE, gan.GetPhone());
+        values.put(KEY_SCHEDULE, gan.GetSchedule());
 
         // Inserting Row
         long gan_id = db.insert(TABLE_GANS, null, values);
@@ -456,7 +458,30 @@ public class SQLiteHandler extends SQLiteOpenHelper
             List<String> Columns = new ArrayList<String>();
             // Run on all columns without the first (UID) and without the days that have not yet arrived
             for (int i = 1; i <= day + 2; i++)
-                Columns.add(curCSV.getString(i));
+            {
+                // The days
+                if (i > 2)
+                {
+                    // Not Presence
+                    if (curCSV.getString(i).contentEquals("0"))
+                    {
+                        // Write 'X' in the center
+                        Columns.add("       X");
+                    }
+                    // Presence
+                    else if (curCSV.getString(i).contentEquals("1"))
+                    {
+                        // Write 'V' in the center
+                        Columns.add("       V");
+                    }
+                }
+                // Parent_ID and kid name
+                else
+                {
+                    // Write the data from cursor
+                    Columns.add(curCSV.getString(i));
+                }
+            }
             String[] ColumnsArr = new String[Columns.size()];
             ColumnsArr = Columns.toArray(ColumnsArr);
             csvWrite.writeNext(ColumnsArr);
@@ -554,6 +579,33 @@ public class SQLiteHandler extends SQLiteOpenHelper
         Log.d(TAG, "Fetching Num_Classes from SQLite");
 
         return num_classes;
+    }
+
+    /**
+     * Getting KinderGan schedule
+     * @return schedule
+     */
+    public String getKinderGanSchedule()
+    {
+        String schedule = null;
+        String selectQuery = "SELECT " + KEY_SCHEDULE + " FROM " + TABLE_GANS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // Move to first row
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0)
+        {
+            // get the data
+            schedule = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        // return schedule
+        Log.d(TAG, "Fetching Schedule from SQLite: " + schedule);
+
+        return schedule;
     }
 
     /**

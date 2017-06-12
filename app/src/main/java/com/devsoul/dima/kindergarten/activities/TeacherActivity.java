@@ -36,7 +36,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -77,6 +79,8 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
 
     private String phone_number;
     private File imageFile;
+
+    private Calendar calendar;
     private int day;
 
     @Override
@@ -105,6 +109,10 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
         //Initializing the ArrayLists
         KIDPICS_LIST = new ArrayList<String>();
         KIDSPRESENCE_LIST = new ArrayList<Integer>();
+
+        calendar = Calendar.getInstance();
+        // Get today date day from calendar
+        day = calendar.get(Calendar.DAY_OF_MONTH);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -171,8 +179,8 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
 
                         // Update in SQLite presence column in kid table
                         db.UpdateKidPresence(ParentID, presence);
-                        // Update column in MySQL
-                        UpdatePresence(ParentID, presence);
+                        // Update column in MySQL in kids table and attendance table
+                        UpdatePresence(ParentID, day, presence);
                         Toast.makeText(TeacherActivity.this,"Presence updated successfully",Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -189,8 +197,8 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
 
                         // Update in SQLite presence column in kid table
                         db.UpdateKidPresence(ParentID, presence);
-                        // Update column in MySQL
-                        UpdatePresence(ParentID, presence);
+                        // Update column in MySQL in kids table and attendance table
+                        UpdatePresence(ParentID, day, presence);
                         Toast.makeText(TeacherActivity.this,"Presence updated successfully",Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -309,10 +317,6 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
                         Camera();
                         break;
                     case R.id.faboptions_download:
-                        // Get today date day from calendar
-                        Calendar calendar = Calendar.getInstance();
-                        day = calendar.get(Calendar.DAY_OF_MONTH);
-
                         // Delete table of attendance from SQLite
                         if (db.getRowCount(SQLiteHandler.TABLE_ATTENDANCE) > 0)
                             db.deleteTable(SQLiteHandler.TABLE_ATTENDANCE);
@@ -459,11 +463,13 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
 
     /**
      * Function to update kid presence in MySQL,
-     * will post all params to login url
+     * update kids and attendance tables.
+     * Will post all params to login url
      * @param ParentID
+     * @param Day - The day to update the presence
      * @param Presence - 1 Arrived, 0 Missing
      */
-    private void UpdatePresence(final String ParentID, final int Presence)
+    private void UpdatePresence(final String ParentID, final int Day, final int Presence)
     {
         // Tag used to cancel the request
         String tag_string_req = "presence_request";
@@ -516,6 +522,7 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "update_presence");
                 params.put("parent_id", ParentID);
+                params.put("day", Integer.toString(Day));
                 params.put("presence", Integer.toString(Presence));
                 return params;
             }
@@ -640,7 +647,7 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
     @Override
     public void onFinishDialog(String time)
     {
-        Log.i("Selected Time: "+ time, "");
+        Log.d("Selected Time: "+ time, "");
 
         // Update teacher notification time
         teacher.put(db.KEY_NOTIFICATION_TIME, time);
@@ -789,8 +796,15 @@ public class TeacherActivity extends AppCompatActivity implements TimePickerFrag
         try
         {
             file.createNewFile();
-            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            OutputStream os = new FileOutputStream(file.getAbsolutePath());
+            // UTF-8 Encoding
+            os.write(239);
+            os.write(187);
+            os.write(191);
+
+            CSVWriter csvWrite = new CSVWriter(new OutputStreamWriter(os, "UTF-8"));
             db.getAttendanceDetails(csvWrite, day);
+            csvWrite.flush();
             csvWrite.close();
         }
         catch (Exception sqlEx)

@@ -3,12 +3,16 @@ package com.devsoul.dima.kindergarten.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -22,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.devsoul.dima.kindergarten.R;
 import com.devsoul.dima.kindergarten.app.AppConfig;
 import com.devsoul.dima.kindergarten.app.AppController;
+import com.devsoul.dima.kindergarten.helper.BitmapHandler;
 import com.devsoul.dima.kindergarten.helper.SQLiteHandler;
 import com.devsoul.dima.kindergarten.helper.SessionManager;
 import com.devsoul.dima.kindergarten.helper.jobs.ShowNotificationJob;
@@ -35,6 +40,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +57,13 @@ public class UserActivity extends Activity
 {
     private static final String TAG = UserActivity.class.getSimpleName();
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSION_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
+    private static final int PICK_IMAGE_REQUEST = 1; // To get Image from gallery
+
     private TextView txtName;
     private TextView txtEmail;
     private CircleImageView imageView;
@@ -56,10 +72,13 @@ public class UserActivity extends Activity
     private ImageButton btnContacts;
     private ImageButton btnPick;
     private ImageButton btnSpecial;
+    private ImageButton btnSchlt;
+    private ImageButton btnSchlp;
 
-    private SQLiteHandler db;
+    private ProgressDialog pDialog, mProgressDialog;
     private SessionManager session;
-    private ProgressDialog pDialog;
+    private SQLiteHandler db;
+    private BitmapHandler bmpHandler;
 
     private Kid Child;
     private Parent Prnt;
@@ -69,15 +88,20 @@ public class UserActivity extends Activity
     private HashMap<String, String> kid;
     private HashMap<String, String> user;
 
-    //An ArrayLists for Dialog Items
     private ArrayList<String> FULLNAME_LIST;
     private String phone_number;
+    private Uri image_path;               // Path of the image
+    private Boolean exist = false;       // url exist online or not
+    private String schedule_planURL;
+    private AlertDialog dialog;         // Dialog of schedule
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        verifyStoragePermissions(this);
 
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
@@ -87,6 +111,8 @@ public class UserActivity extends Activity
         btnContacts = (ImageButton) findViewById(R.id.btnContacts);
         btnPick = (ImageButton) findViewById(R.id.btnPick);
         btnSpecial = (ImageButton) findViewById(R.id.btnSpecial);
+        btnSchlt = (ImageButton) findViewById(R.id.btnSchlt);
+        btnSchlp = (ImageButton) findViewById(R.id.btnSchlp);
 
         Child = new Kid();
         Prnt = new Parent();
@@ -102,6 +128,9 @@ public class UserActivity extends Activity
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
 
+        // Bitmap handler
+        bmpHandler = new BitmapHandler(getApplicationContext());
+
         // session manager
         session = new SessionManager(getApplicationContext());
 
@@ -113,6 +142,10 @@ public class UserActivity extends Activity
 
         String path;
 
+        if (db.getRowCount(SQLiteHandler.TABLE_GANS) != 0)
+            // Delete the table from SQLite, because we need to load kindergan schedule from MySQL server
+            db.deleteTable(db.TABLE_GANS);
+
         // Get the user type from session
         switch (session.getType())
         {
@@ -122,6 +155,12 @@ public class UserActivity extends Activity
                 // Fetching user details from SQLite teachers table
                 user = db.getTeacherDetails();
                 path = user.get(db.KEY_PHOTO);
+
+                // Fetching schedule plan
+                LoadSchedule(user.get(db.KEY_KINDERGAN_NAME));
+
+                btnSchlt.setVisibility(View.VISIBLE);
+                btnSchlp.setVisibility(View.GONE);
                 break;
             }
             // Parent type
@@ -139,6 +178,11 @@ public class UserActivity extends Activity
                     LoadTeachers(user.get(db.KEY_ID), kid.get(db.KEY_KINDERGAN_NAME), kid.get(db.KEY_CLASS));
                 }
 
+                // Fetching schedule plan
+                LoadSchedule(kid.get(db.KEY_KINDERGAN_NAME));
+
+                btnSchlp.setVisibility(View.VISIBLE);
+                btnSchlt.setVisibility(View.GONE);
                 btnEnter.setVisibility(View.GONE);
                 btnContacts.setVisibility(View.VISIBLE);
                 btnPick.setVisibility(View.VISIBLE);
@@ -162,6 +206,86 @@ public class UserActivity extends Activity
         Picasso.with(getApplicationContext()).load(path).placeholder(R.drawable.profile).error(R.drawable.profile)
                 .into(imageView);
 
+        // Schedule click event in Nanny
+        btnSchlt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                // Checking if schedule file exist online
+                MyTask task = new MyTask();
+                task.execute(schedule_planURL);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
+                builder.setTitle("Schedule");
+                builder.setMessage("Would you like to Upload, View or Download the Schedule?");
+                builder.setPositiveButton("Download", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        startDownload(user.get(db.KEY_KINDERGAN_NAME));
+                    }
+                });
+
+                builder.setNeutralButton("Upload", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showFileChooser();
+                    }
+                });
+                builder.setNegativeButton("View", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("content://media/internal/images/media"));
+                        intent.setType("image/*");
+                        startActivity(intent);
+                    }
+                });
+                dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        // Schedule click event in Parent
+        btnSchlp.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                // Checking if schedule file exist online
+                MyTask task = new MyTask();
+                task.execute(schedule_planURL);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
+                builder.setTitle("Schedule");
+                builder.setMessage("Would you like to View or Download the Schedule?");
+                builder.setPositiveButton("Download", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        startDownload(kid.get(db.KEY_KINDERGAN_NAME));
+                    }
+                });
+
+                builder.setNegativeButton("View", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("content://media/internal/images/media"));
+                        intent.setType("image/*");
+                        startActivity(intent);
+                    }
+                });
+                dialog = builder.create();
+                dialog.show();
+            }
+        });
+
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener()
         {
@@ -184,9 +308,11 @@ public class UserActivity extends Activity
                 }
                 else
                 {
-                    // Go to teacher activity
-                    Intent intent = new Intent(UserActivity.this, TeacherActivity.class);
-                    startActivity(intent);
+                    // Delete the tables from SQLite, because we need to load kids presence from MySQL server
+                    db.deleteTable(db.TABLE_PARENTS);
+                    db.deleteTable(db.TABLE_KIDS);
+                    // Load kids that belong to specific teacher from MySQL
+                    LoadKids(user.get(db.KEY_KINDERGAN_NAME), user.get(db.KEY_KINDERGAN_CLASS));
                 }
             }
         });
@@ -676,6 +802,179 @@ public class UserActivity extends Activity
     }
 
     /**
+     * Function to upload schedule to MySQL database,
+     * will post all params to login url
+     * @param TeacherKinderGanName
+     * @param TeacherKinderGanCity
+     */
+    private void uploadSchedule(final String TeacherKinderGanName, final String TeacherKinderGanCity)
+    {
+        // Tag used to cancel the request
+        String tag_string_req = "schedule_request";
+
+        pDialog.setMessage("Uploading schedule ...");
+        showDialog();
+
+        // Making the volley http request
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.LOGIN_URL, new Response.Listener<String>()
+        {
+            @Override
+            public void onResponse(String response)
+            {
+                Log.d(TAG, "schedule Response: " + response.toString());
+                hideDialog();
+
+                try
+                {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (error)
+                    {
+                        // Error occurred in insert. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        onLoadFailed(errorMsg);
+                    }
+                    else
+                    {
+                        onLoadFailed("The schedule uploaded");
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e(TAG, "Update Error: " + error.getMessage());
+                onLoadFailed(error.getMessage());
+                hideDialog();
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                // Posting parameters to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "upload_schedule");
+                params.put("KinderGan_Name", TeacherKinderGanName);
+                params.put("KinderGan_City", TeacherKinderGanCity);
+                //Converting Bitmap to String
+                String image = bmpHandler.getStringImage(bmpHandler.decodeSampledBitmapFromStream(Uri.parse(Gan.GetSchedule()), 720, 1280));
+                params.put("Schedule", image);
+
+                return params;
+            }
+        };
+
+        //Set a retry policy in case of SocketTimeout & ConnectionTimeout Exceptions.
+        //Volley does retry for you if you have specified the policy.
+        strReq.setRetryPolicy(new DefaultRetryPolicy(7000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    /**
+     * Function to load schedule from MySQL database to SQLite,
+     * will post all params to login url
+     * @param KinderGanName
+     */
+    private void LoadSchedule(final String KinderGanName)
+    {
+        // Tag used to cancel the request
+        String tag_string_req = "schedule_request";
+
+        pDialog.setMessage("Loading schedule ...");
+        showDialog();
+
+        // Making the volley http request
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.LOGIN_URL, new Response.Listener<String>()
+        {
+            @Override
+            public void onResponse(String response)
+            {
+                Log.d(TAG, "schedule Response: " + response.toString());
+                hideDialog();
+
+                try
+                {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error)
+                    {
+                        // KinderGan successfully loaded from MySQL
+                        // Now store the KinderGan in SQLite
+                        JSONObject gan = jObj.getJSONObject("gan");
+                        Gan.SetID(gan.getString("uid"));
+                        Gan.SetName(gan.getString("name"));
+                        Gan.SetClasses(Integer.parseInt(gan.getString("classes")));
+                        Gan.SetAddress(gan.getString("address"));
+                        Gan.SetCity(gan.getString("city"));
+                        Gan.SetPhone(gan.getString("phone"));
+                        Gan.SetSchedule(gan.getString("schedule_plan"));
+
+                        // Inserting row in kindergans table
+                        db.addKindergan(Gan);
+
+                        // Get the schedule url
+                        schedule_planURL = db.getKinderGanSchedule();
+                    }
+                    else
+                    {
+                        // Error occurred in loading. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        onLoadFailed(errorMsg);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e(TAG, "Load Error: " + error.getMessage());
+                onLoadFailed(error.getMessage());
+                hideDialog();
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "get_schedule");
+                params.put("KinderGan_Name", KinderGanName);
+                return params;
+            }
+        };
+
+        //Set a retry policy in case of SocketTimeout & ConnectionTimeout Exceptions.
+        //Volley does retry for you if you have specified the policy.
+        strReq.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    /**
      * This function shows a message to the user that the load has failed.
      */
     public void onLoadFailed(String message)
@@ -879,6 +1178,7 @@ public class UserActivity extends Activity
      */
     public void Notification()
     {
+        /*
         // Kid doesn't presence in kindergarten
         if (Integer.parseInt(kid.get(db.KEY_PRESENCE)) == 0)
         {
@@ -891,8 +1191,222 @@ public class UserActivity extends Activity
                 int hours = Integer.parseInt(parts[0]);
                 int minutes = Integer.parseInt(parts[1]);
                 // Set notification alarm
-                ShowNotificationJob.scheduleExact(hours, minutes);
+                ShowNotificationJob.scheduleExact(hours, minutes, kid.get(db.KEY_PARENT_ID));
             }
+        }
+        */
+
+        // get notification time from teacher
+        String notification_time = db.getNotificationTime();
+        if (notification_time != null)
+        {
+            // Split time to hours and minutes
+            String[] parts = notification_time.split(":");
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+            // Set notification alarm
+            ShowNotificationJob.scheduleExact(hours, minutes, kid.get(db.KEY_PARENT_ID));
+        }
+    }
+
+    //Check if the file is online or not and if it's a picture or not
+    private class MyTask extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params)
+        {
+            try
+            {
+                HttpURLConnection.setFollowRedirects(false);
+                HttpURLConnection con = (HttpURLConnection) new URL(params[0]).openConnection();
+                con.setRequestMethod("HEAD");
+                System.out.println(con.getResponseCode());
+                return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result)
+        {
+            boolean bResponse = result;
+            if (bResponse==true)
+            {
+                exist = true;
+                // Set download button visible
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+                Toast.makeText(UserActivity.this, "File exists online!", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                exist = false;
+                // Set download button invisible
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+                Toast.makeText(UserActivity.this, "The file doesn't exist, Please make sure the Schedule is Uploaded", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * This method for choosing image from gallery
+     */
+    private void showFileChooser()
+    {
+        Intent intent;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        // The current version is Kitkat or higher
+        {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        }
+        else
+        // The current version is lower than Kitkat
+        {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        }
+
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType("image/*");
+
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    /**
+     * Get the Uri of bitmap from gallery
+     */
+    //@TargetApi(Build.VERSION_CODES.KITKAT)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
+        {
+            image_path = data.getData();
+            // Save the picture path in Gan object
+            Gan.SetSchedule(image_path.toString());
+
+            uploadSchedule(user.get(db.KEY_KINDERGAN_NAME), user.get(db.KEY_CITY));
+        }
+    }
+
+    private void startDownload(String KinderGanName)
+    {
+        String url = schedule_planURL;
+        new DownloadFileAsync().execute(url, KinderGanName);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id)
+    {
+        switch (id)
+        {
+            case DIALOG_DOWNLOAD_PROGRESS:
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setMessage("Downloading file..");
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+                return mProgressDialog;
+            default:
+                return null;
+        }
+    }
+
+    class DownloadFileAsync extends AsyncTask<String, String, String>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            showDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
+
+        @Override
+        protected String doInBackground(String... aurl)
+        {
+            int count;
+
+            try
+            {
+                URL url = new URL(aurl[0]);
+                URLConnection conexion = url.openConnection();
+                conexion.connect();
+
+                int lenghtOfFile = conexion.getContentLength();
+                Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+
+                InputStream input = new BufferedInputStream(url.openStream());
+
+                File storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                final File newFile = new File(storagePath,"KinderGan");
+                if (!newFile.exists())
+                    newFile.mkdirs();
+                OutputStream output = new FileOutputStream(new File(newFile,"Schedule" + aurl[1] + ".png"));
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1)
+                {
+                    total += count;
+                    publishProgress(""+(int)((total*100)/lenghtOfFile));
+                    output.write(data, 0, count);
+                }
+
+                output.flush();
+                output.close();
+                input.close();
+            }
+            catch (Exception e)
+            {
+                onLoadFailed("Download Failed, Please Make Sure A Schedule Have Been Uploaded");
+            }
+            return null;
+        }
+
+        protected void onProgressUpdate(String... progress)
+        {
+            Log.d("ANDRO_ASYNC",progress[0]);
+            mProgressDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        @Override
+        protected void onPostExecute(String unused)
+        {
+            Toast.makeText(getBaseContext(), "Download Complete, The File Is In DCIM/KinderGan Folder", Toast.LENGTH_LONG).show();
+            dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
+    }
+
+    /*
+    Verify external read and write permissions and grant them on runtime
+    */
+    public static void verifyStoragePermissions(Activity activity)
+    {
+        // Check if we have read or write permission
+        int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int readPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (writePermission != PackageManager.PERMISSION_GRANTED || readPermission != PackageManager.PERMISSION_GRANTED)
+        {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity,
+                    PERMISSION_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
         }
     }
 }
