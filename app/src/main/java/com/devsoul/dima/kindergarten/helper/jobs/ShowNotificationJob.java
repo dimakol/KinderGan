@@ -135,6 +135,7 @@ public class ShowNotificationJob extends Job
 
     /**
      * Schedule periodic job every 15 minutes
+     * for debug (testing)
      */
     public static void schedulePeriodic1(String ParentID)
     {

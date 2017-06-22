@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 /**
  * This is the Kid class
- * @params Name, BirthDate, Picture, Class, Created_at
+ * @params Name, BirthDate, Picture, Class,
+ * Parent_ID, Presence, Special,
+ * Contact1, Contact2, Contact3, Created_at
  */
 public class Kid implements Serializable
 {

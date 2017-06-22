@@ -308,6 +308,7 @@ public class SignupTeacherActivity extends Activity
                 //final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 // Check for the freshest data.
                 //getContentResolver().takePersistableUriPermission(image_path, takeFlags);
+
                 // Decode the image and set on the image view
                 bmpHandler.loadBitmap(image_path, imageView);
 

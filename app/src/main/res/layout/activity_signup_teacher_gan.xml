@@ -69,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:inputType="textEmailAddress"
+                android:maxLength="50"
                 android:hint="@string/hint_email" />
     </android.support.design.widget.TextInputLayout>
 
@@ -84,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:inputType="textPassword"
+                android:maxLength="50"
                 android:hint="@string/hint_password"/>
     </android.support.design.widget.TextInputLayout>
 

@@ -63,7 +63,6 @@ public class TimePickerFragment extends DialogFragment
                 .create();
     }
 
-    /**
     private String updateTime(int hours, int mins)
     {
         String timeSet = "";
@@ -95,7 +94,6 @@ public class TimePickerFragment extends DialogFragment
 
         return myTime;
     }
-    **/
 
     private String getSelectedTime(int hours, int minutes)
     {

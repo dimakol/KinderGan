@@ -1178,24 +1178,6 @@ public class UserActivity extends Activity
      */
     public void Notification()
     {
-        /*
-        // Kid doesn't presence in kindergarten
-        if (Integer.parseInt(kid.get(db.KEY_PRESENCE)) == 0)
-        {
-            // get notification time from teacher
-            String notification_time = db.getNotificationTime();
-            if (notification_time != null)
-            {
-                // Split time to hours and minutes
-                String[] parts = notification_time.split(":");
-                int hours = Integer.parseInt(parts[0]);
-                int minutes = Integer.parseInt(parts[1]);
-                // Set notification alarm
-                ShowNotificationJob.scheduleExact(hours, minutes, kid.get(db.KEY_PARENT_ID));
-            }
-        }
-        */
-
         // get notification time from teacher
         String notification_time = db.getNotificationTime();
         if (notification_time != null)

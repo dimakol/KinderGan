@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 public class SignupTeacherGanActivity extends Activity
 {
     private static final String TAG = SignupTeacherGanActivity.class.getSimpleName();
+
     private static final String PASSWORD_PATTERN =
                     "((?=.*\\d)" +        // must contains one digit from 0-9
                     "(?=.*[a-z])" +       // must contains one lowercase characters
