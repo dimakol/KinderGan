@@ -6,7 +6,7 @@ and working with [Volley](https://github.com/google/volley) library to make HTTP
 To run the application just install the KinderGan.apk file on your android device.<br />
 <a id="raw-url" href="https://raw.githubusercontent.com/dimakol/KinderGan/master/KinderGan.apk">Click here to download the apk file</a>
 
-**View the [SE12-Final_Project_Book.pdf](/SE12_Final_Project_Book.pdf) file to get all the information regarding our app.**
+**View the [SE12-Final_Project_Book.pdf](SE12-Final_Project_Book.pdf) file to get all the information regarding our app.**
 
 <hr/>
 
