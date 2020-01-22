@@ -1,4 +1,4 @@
-# KinderGan
+# KinderGan :family:
 This is an [Android](https://www.android.com/) application for Kindergartens. <br />
 The application uses REST API to interact with [MySQL](https://www.mysql.com/) database, through [PHP](https://www.php.net/) <br />
 and working with [Volley](https://github.com/google/volley) library to make HTTP calls.
